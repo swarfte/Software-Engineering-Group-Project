@@ -4,7 +4,7 @@ import views
 import controllers
 
 
-def main() -> None:
+def original_calculator() -> None:
     root = tk.Tk()
     model = models.BaseModel()
     view = views.BaseView(root)
@@ -12,5 +12,15 @@ def main() -> None:
     root.mainloop()
 
 
+def advance_calculator() -> None:
+    root = tk.Tk()
+    root.geometry("450x550")
+    model = models.AdvanceModel()
+    view = views.AdvanceView(root)
+    controller = controllers.AdvanceController(model, view)
+    root.mainloop()
+
+
 if __name__ == '__main__':
-    main()
+    # original_calculator()
+    advance_calculator()

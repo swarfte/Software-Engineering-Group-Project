@@ -22,15 +22,33 @@ class BaseModel(AbstractModel):
     def __init__(self):
         self.expression = ""
 
-    def update_expression(self, value):
+    def update_expression(self, value) -> None:
         self.expression += value
 
-    def calculate_expression(self):
+    def calculate_expression(self) -> None:
         try:
             result = str(eval(self.expression))
             self.expression = result
         except:
             self.expression = "Error"
 
-    def clear_expression(self):
+    def clear_expression(self) -> None:
+        self.expression = ""
+
+
+class AdvanceModel(AbstractModel):
+    def __init__(self):
+        self.expression = ""
+
+    def update_expression(self, value) -> None:
+        self.expression += value
+
+    def calculate_expression(self) -> None:
+        try:
+            result = str(eval(self.expression))
+            self.expression = result
+        except:
+            self.expression = "Error"
+
+    def clear_expression(self) -> None:
         self.expression = ""

@@ -50,14 +50,47 @@ class BaseController(AbstractController):
         self.view.create_button(
             "9", 1, 2, command=lambda: self.update_expression("9"))
 
-    def update_expression(self, value):
+    def update_expression(self, value: str) -> None:
         self.model.update_expression(value)
         self.view.set_output(self.model.expression)
 
-    def calculate_expression(self):
+    def calculate_expression(self) -> None:
         self.model.calculate_expression()
         self.view.set_output(self.model.expression)
 
-    def clear_expression(self):
+    def clear_expression(self) -> None:
+        self.model.clear_expression()
+        self.view.set_output(self.model.expression)
+
+
+class AdvanceController(AbstractController):
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+
+        self.setup()
+
+    def setup(self):
+        symbol = self.view.symbol
+        column_size = 5
+        for y in range(1, len(symbol) // column_size + 1):
+            for x in range(column_size):
+                self.view.create_button(
+                    symbol[(y-1) * column_size + x],
+                    y,
+                    x,
+                    command=lambda symbol=symbol[(
+                        y-1) * column_size + x]: self.update_expression(symbol)
+                )
+
+    def update_expression(self, value: str) -> None:
+        self.model.update_expression(value)
+        self.view.set_output(self.model.expression)
+
+    def calculate_expression(self) -> None:
+        self.model.calculate_expression()
+        self.view.set_output(self.model.expression)
+
+    def clear_expression(self) -> None:
         self.model.clear_expression()
         self.view.set_output(self.model.expression)
