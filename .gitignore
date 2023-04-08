@@ -1,4 +1,4 @@
 *.pyc
-.env
 .vscode/*
 .history/
+env
