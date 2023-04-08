@@ -60,12 +60,12 @@ class AdvanceView(AbstractView):
             "e",
             "C",
             "delete",
-            "x^2",
+            "\u03C0",  # pi
             "1/x",
             "|x|",
             "exp",
             "mod",
-            "root 2",
+            "\u221A",  # root 2
             "(",
             ")",
             "n!",

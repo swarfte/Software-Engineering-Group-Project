@@ -22,7 +22,7 @@ class BaseModel(AbstractModel):
     def __init__(self):
         self.expression = ""
 
-    def update_expression(self, value) -> None:
+    def update_expression(self, value: str) -> None:
         self.expression += value
 
     def calculate_expression(self) -> None:
@@ -40,7 +40,7 @@ class AdvanceModel(AbstractModel):
     def __init__(self):
         self.expression = ""
 
-    def update_expression(self, value) -> None:
+    def update_expression(self, value: str) -> None:
         self.expression += value
 
     def calculate_expression(self) -> None:
@@ -52,3 +52,6 @@ class AdvanceModel(AbstractModel):
 
     def clear_expression(self) -> None:
         self.expression = ""
+
+    def get_reciprocal(self) -> None:
+        self.expression = "1/" + self.expression

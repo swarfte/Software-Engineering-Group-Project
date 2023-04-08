@@ -74,26 +74,26 @@ class AdvanceController(AbstractController):
             "sec(",
             "csc(",
             "cot(",
-            "x3.14",
+            "\u03C0",  # pi
             "e",
-            self.clear_expression,
+            self.clear_expression,  # C => 清除輸入
             "delete",
-            "x^2",
-            "1/x",
+            "**2",
+            self.get_reciprocal,  # TODO 1/x  寫個function實現
             "|x|",
             "exp",
             "mod",
-            "^0.5",
+            "** 0.5",  # root 2 => **0.5
             "(",
             ")",
             "n!",
             "/",
-            "^",
+            "**",
             "7",
             "8",
             "9",
             "*",
-            "10^",
+            "10 **",  # 10的N次方
             "4",
             "5",
             "6",
@@ -107,7 +107,7 @@ class AdvanceController(AbstractController):
             "+/-",
             "0",
             ".",
-            self.calculate_expression
+            self.calculate_expression  # "=" => 計算結果
         ]
 
         self.setup()
@@ -144,3 +144,7 @@ class AdvanceController(AbstractController):
     def clear_expression(self) -> None:
         self.model.clear_expression()
         self.view.set_output(self.model.expression)
+
+    def get_reciprocal(self) -> None:
+        self.model.get_reciprocal()
+        self.calculate_expression()
