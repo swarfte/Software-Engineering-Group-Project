@@ -67,6 +67,48 @@ class AdvanceController(AbstractController):
     def __init__(self, model, view):
         self.model = model
         self.view = view
+        self.command = [
+            "sin(",
+            "cos(",
+            "tan(",
+            "sec(",
+            "csc(",
+            "cot(",
+            "x3.14",
+            "e",
+            self.clear_expression,
+            "delete",
+            "x^2",
+            "1/x",
+            "|x|",
+            "exp",
+            "mod",
+            "^0.5",
+            "(",
+            ")",
+            "n!",
+            "/",
+            "^",
+            "7",
+            "8",
+            "9",
+            "*",
+            "10^",
+            "4",
+            "5",
+            "6",
+            "-",
+            "log(",
+            "1",
+            "2",
+            "3",
+            "+",
+            "ln",
+            "+/-",
+            "0",
+            ".",
+            self.calculate_expression
+        ]
 
         self.setup()
 
@@ -75,13 +117,21 @@ class AdvanceController(AbstractController):
         column_size = 5
         for y in range(1, len(symbol) // column_size + 1):
             for x in range(column_size):
-                self.view.create_button(
-                    symbol[(y-1) * column_size + x],
-                    y,
-                    x,
-                    command=lambda symbol=symbol[(
-                        y-1) * column_size + x]: self.update_expression(symbol)
-                )
+                if type(self.command[(y-1) * column_size + x]) == str:
+                    self.view.create_button(
+                        symbol[(y-1) * column_size + x],
+                        y,
+                        x,
+                        command=lambda symbol=self.command[(
+                            y-1) * column_size + x]: self.update_expression(symbol)
+                    )
+                else:
+                    self.view.create_button(
+                        symbol[(y-1) * column_size + x],
+                        y,
+                        x,
+                        command=self.command[(y-1) * column_size + x]
+                    )
 
     def update_expression(self, value: str) -> None:
         self.model.update_expression(value)
