@@ -73,8 +73,8 @@ class AdvanceController(AbstractController):
 
         self.command = [
             self.sin_expression,  # sin()
-            "cos(",
-            "tan(",
+            self.cos_expression,
+            self.tan_expression,
             "sec(",
             "csc(",
             "cot(",
@@ -85,7 +85,7 @@ class AdvanceController(AbstractController):
             "**2",
             self.get_reciprocal,  # 1/x  => 倒數
             "|x|",
-            "exp",
+            ".e+",  # exp => 科學計數法
             "mod",
             "** 0.5",  # root 2 => **0.5
             "(",
@@ -153,6 +153,10 @@ class AdvanceController(AbstractController):
         self.model.get_reciprocal()
         self.calculate_expression()
 
+    def get_10power(self) -> None:
+        self.model.get_10power()
+        self.view.set_output(self.model.expression)
+
     def delete_expression(self) -> None:
         self.model.delete_expression()
         self.view.set_output(self.model.expression)
@@ -163,4 +167,24 @@ class AdvanceController(AbstractController):
 
     def sin_expression(self) -> None:
         self.model.sin_expression()
+        self.view.set_output(self.model.expression)
+
+    def cos_expression(self) -> None:
+        self.model.cos_expression()
+        self.view.set_output(self.model.expression)
+
+    def tan_expression(self) -> None:
+        self.model.tan_expression()
+        self.view.set_output(self.model.expression)
+
+    def sec_expression(self) -> None:
+        self.model.sec_expression()
+        self.view.set_output(self.model.expression)
+
+    def csc_expression(self) -> None:
+        self.model.csc_expression()
+        self.view.set_output(self.model.expression)
+
+    def cot_expression(self) -> None:
+        self.model.cot_expression()
         self.view.set_output(self.model.expression)

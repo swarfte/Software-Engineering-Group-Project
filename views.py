@@ -24,7 +24,8 @@ class BaseView(AbstractView):
         self.master.title("Calculator")
 
         # Create the entry field
-        self.display = tk.Entry(self.master, width=30, font=('Arial', 12))
+        self.display = tk.Entry(self.master, width=30,
+                                font=('Arial', 12))
         self.display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
 
     def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None):
@@ -47,6 +48,7 @@ class AdvanceView(AbstractView):
         self.master.title("Science Calculator")
 
         self.display = tk.Entry(self.master, width=30, font=('Arial', 12))
+        self.display.config(state="readonly")
         self.display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
 
         self.symbol = [
@@ -102,5 +104,7 @@ class AdvanceView(AbstractView):
         return self.display.get()
 
     def set_output(self, value):
+        self.display.config(state="normal")
         self.display.delete(0, tk.END)
         self.display.insert(0, value)
+        self.display.config(state="readonly")

@@ -52,7 +52,16 @@ class AdvanceModel(AbstractModel):
         self.trigonometric_function_setup()
 
     def trigonometric_function_setup(self):
-        pass
+        for func in self.trigonometric_function:
+            def make_dynamic_function(func):
+                def dynamic_function():
+                    exec(f"""
+angle_in_degrees = float({self.expression})
+angle_in_radians = math.radians(angle_in_degrees)
+{func}_angle = math.{func}(angle_in_radians)
+self.expression = str({func}_angle)""")
+                return dynamic_function
+            setattr(self, f"{func}_expression", make_dynamic_function(func))
 
     def update_expression(self, value: str) -> None:
         self.expression += value
@@ -70,10 +79,13 @@ class AdvanceModel(AbstractModel):
     def get_reciprocal(self) -> None:
         self.expression = "1/" + self.expression
 
+    def get_10power(self) -> None:
+        self.expression = "10**" + self.expression
+
     def delete_expression(self) -> None:
         self.expression = self.expression[0:len(self.expression)-1]
 
-    def get_factorial(self) -> None:
+    def get_factorial(self) -> None:  # 階乘
         factorial = 1
         if int(self.expression) < 0:
             self.expression = "Error"
@@ -83,9 +95,3 @@ class AdvanceModel(AbstractModel):
             for i in range(1, int(self.expression) + 1):
                 factorial = factorial*i
             self.expression = factorial
-
-    # def sin_expression(self) -> None:
-    #     angle_in_degrees = float(self.expression)
-    #     angle_in_radians = math.radians(angle_in_degrees)
-    #     sin_angle = math.sin(angle_in_radians)
-    #     self.expression = str(sin_angle)
