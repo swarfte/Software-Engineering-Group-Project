@@ -52,16 +52,20 @@ class AdvanceModel(AbstractModel):
         self.trigonometric_function_setup()
 
     def trigonometric_function_setup(self):
-        for func in self.trigonometric_function:
-            def make_dynamic_function(func):
+        for i in range(len(self.trigonometric_function)):
+            def make_dynamic_function(func, index):
                 def dynamic_function():
                     exec(f"""
 angle_in_degrees = float({self.expression})
 angle_in_radians = math.radians(angle_in_degrees)
-{func}_angle = math.{func}(angle_in_radians)
-self.expression = str({func}_angle)""")
+if "{func[index]}" == "sin" or "{func[index]}" == "cos" or "{func[index]}" == "tan":
+    {func[index]}_angle = math.{func[index]}(angle_in_radians)
+else:
+    {func[index]}_angle = 1/math.{func[index-3]}(angle_in_radians)
+self.expression = str({func[index]}_angle)""")
                 return dynamic_function
-            setattr(self, f"{func}_expression", make_dynamic_function(func))
+            setattr(self, f"{self.trigonometric_function[i]}_expression", make_dynamic_function(
+                self.trigonometric_function, i))
 
     def update_expression(self, value: str) -> None:
         self.expression += value
@@ -95,3 +99,15 @@ self.expression = str({func}_angle)""")
             for i in range(1, int(self.expression) + 1):
                 factorial = factorial*i
             self.expression = factorial
+
+    def get_pi(self) -> None:
+        self.expression = math.pi
+
+    def get_e(self) -> None:
+        self.expression = math.e
+
+    def get_log10(self) -> None:
+        self.expression = math.log10(int(self.expression))
+
+    def get_log2(self) -> None:
+        self.expression = math.log2(int(self.expression))

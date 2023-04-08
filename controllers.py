@@ -72,21 +72,21 @@ class AdvanceController(AbstractController):
         self.view = view
 
         self.command = [
-            self.sin_expression,  # sin()
+            self.sin_expression,
             self.cos_expression,
             self.tan_expression,
-            "sec(",
-            "csc(",
-            "cot(",
-            "\u03C0",  # pi
-            "e",
+            self.sec_expression,
+            self.csc_expression,
+            self.cot_expression,
+            self.get_pi,  # pi
+            self.get_e,
             self.clear_expression,  # C => 清除輸入
             self.delete_expression,
             "**2",
             self.get_reciprocal,  # 1/x  => 倒數
             "|x|",
             ".e+",  # exp => 科學計數法
-            "mod",
+            "%",
             "** 0.5",  # root 2 => **0.5
             "(",
             ")",
@@ -187,4 +187,20 @@ class AdvanceController(AbstractController):
 
     def cot_expression(self) -> None:
         self.model.cot_expression()
+        self.view.set_output(self.model.expression)
+
+    def get_pi(self) -> None:
+        self.model.get_pi()
+        self.view.set_output(self.model.expression)
+
+    def get_e(self) -> None:
+        self.model.get_e()
+        self.view.set_output(self.model.expression)
+
+    def get_log10(self) -> None:
+        self.model.get_log10()
+        self.view.set_output(self.model.expression)
+
+    def get_log2(self) -> None:
+        self.model.get_log2()
         self.view.set_output(self.model.expression)
