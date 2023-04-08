@@ -1,3 +1,6 @@
+import decorator
+
+
 class AbstractController(object):
     def __init__(self, model, view):
         pass
@@ -67,8 +70,9 @@ class AdvanceController(AbstractController):
     def __init__(self, model, view):
         self.model = model
         self.view = view
+
         self.command = [
-            "sin(",
+            self.sin_expression,  # sin()
             "cos(",
             "tan(",
             "sec(",
@@ -77,16 +81,16 @@ class AdvanceController(AbstractController):
             "\u03C0",  # pi
             "e",
             self.clear_expression,  # C => 清除輸入
-            "delete",
+            self.delete_expression,
             "**2",
-            self.get_reciprocal,  # TODO 1/x  寫個function實現
+            self.get_reciprocal,  # 1/x  => 倒數
             "|x|",
             "exp",
             "mod",
             "** 0.5",  # root 2 => **0.5
             "(",
             ")",
-            "n!",
+            self.get_factorial,
             "/",
             "**",
             "7",
@@ -148,3 +152,15 @@ class AdvanceController(AbstractController):
     def get_reciprocal(self) -> None:
         self.model.get_reciprocal()
         self.calculate_expression()
+
+    def delete_expression(self) -> None:
+        self.model.delete_expression()
+        self.view.set_output(self.model.expression)
+
+    def get_factorial(self) -> None:  # 階乘
+        self.model.get_factorial()
+        self.view.set_output(self.model.expression)
+
+    def sin_expression(self) -> None:
+        self.model.sin_expression()
+        self.view.set_output(self.model.expression)
