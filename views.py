@@ -58,11 +58,11 @@ class AdvanceView(AbstractView):
             "sec",
             "csc",
             "cot",
-            "pi",
+            "\u03C0",     # pi 3.14
             "e",
             "C",
             "delete",
-            "\u03C0",  # pi
+            "x\u00B2",  # x^2  #\u00B2係^2  #\u00B3係^3
             "1/x",
             "|x|",
             "exp",
@@ -72,12 +72,12 @@ class AdvanceView(AbstractView):
             ")",
             "n!",
             "/",
-            "x^y",
+            "x\u02B8",     # x^y   改完但x同y望落有啲奇怪   
             "7",
             "8",
             "9",
             "x",
-            "10^x",
+            "10\u02E3",    #  10^x 
             "4",
             "5",
             "6",
