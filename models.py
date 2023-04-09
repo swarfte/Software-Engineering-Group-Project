@@ -68,11 +68,14 @@ self.expression = str({func[index]}_angle)""")
                 self.trigonometric_function, i))
 
     def update_expression(self, value: str) -> None:
-        self.expression += value
+        if str(self.expression) == "Error":
+            self.expression = value
+        else:
+            self.expression = str(self.expression) + value
 
     def calculate_expression(self) -> None:
         try:
-            result = str(eval(self.expression))
+            result = str(eval(str(self.expression)))
             self.expression = result
         except:
             self.expression = "Error"
@@ -81,13 +84,13 @@ self.expression = str({func[index]}_angle)""")
         self.expression = ""
 
     def get_reciprocal(self) -> None:
-        self.expression = "1/" + self.expression
+        self.expression = "1/" + str(self.expression)
 
     def get_10power(self) -> None:
-        self.expression = "10**" + self.expression
+        self.expression = "10**" + str(self.expression)
 
     def delete_expression(self) -> None:
-        self.expression = self.expression[0:len(self.expression)-1]
+        self.expression = self.expression[0:len(str(self.expression))-1]
 
     def get_factorial(self) -> None:  # 階乘
         factorial = 1
@@ -109,5 +112,14 @@ self.expression = str({func[index]}_angle)""")
     def get_log10(self) -> None:
         self.expression = math.log10(int(self.expression))
 
-    def get_log2(self) -> None:
-        self.expression = math.log2(int(self.expression))
+    def get_logln(self) -> None:
+        self.expression = math.log(int(self.expression))
+
+    def set_minus(self) -> None:
+        if int(self.expression) > 0:
+            self.expression = "-" + str(self.expression)
+        else:
+            self.expression = abs(int(self.expression))
+
+    def get_abs(self) -> None:
+        self.expression = abs(int(self.expression))
