@@ -84,13 +84,13 @@ class AdvanceController(AbstractController):
             self.delete_expression,
             "**2",
             self.get_reciprocal,  # 1/x  => 倒數
-            "|x|",
+            self.get_abs,
             ".e+",  # exp => 科學計數法
             "%",
             "** 0.5",  # root 2 => **0.5
             "(",
             ")",
-            self.get_factorial,
+            self.get_factorial,  # 階乘 x!
             "/",
             "**",
             "7",
@@ -102,13 +102,13 @@ class AdvanceController(AbstractController):
             "5",
             "6",
             "-",
-            "log(",
+            self.get_log10,
             "1",
             "2",
             "3",
             "+",
-            "ln",
-            "+/-",
+            self.get_logln,    # ln
+            self.set_minus,    # +/-
             "0",
             ".",
             self.calculate_expression  # "=" => 計算結果
@@ -201,6 +201,14 @@ class AdvanceController(AbstractController):
         self.model.get_log10()
         self.view.set_output(self.model.expression)
 
-    def get_log2(self) -> None:
-        self.model.get_log2()
+    def get_logln(self) -> None:
+        self.model.get_logln()
+        self.view.set_output(self.model.expression)
+
+    def set_minus(self) -> None:
+        self.model.set_minus()
+        self.view.set_output(self.model.expression)
+
+    def get_abs(self) -> None:
+        self.model.get_abs()
         self.view.set_output(self.model.expression)
