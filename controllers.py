@@ -69,12 +69,12 @@ class AdvanceController(AbstractController):
         self.view = view
 
         self.command = [
-            self.generic_expression("sin_expression"),
-            self.generic_expression("cos_expression"),
-            self.generic_expression("tan_expression"),
-            self.generic_expression("sec_expression"),
-            self.generic_expression("csc_expression"),
-            self.generic_expression("cot_expression"),
+            self.generic_expression("get_sin"),
+            self.generic_expression("get_cos"),
+            self.generic_expression("get_tan"),
+            self.generic_expression("get_sec"),
+            self.generic_expression("get_csc"),
+            self.generic_expression("get_cot"),
             self.generic_expression("get_pi"),  # pi
             self.generic_expression("get_e"),
             self.generic_expression("clear_expression"),  # C => 清除輸入

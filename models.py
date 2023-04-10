@@ -52,20 +52,18 @@ class AdvanceModel(AbstractModel):
         self.trigonometric_function_setup()
 
     def trigonometric_function_setup(self):
-        for i in range(len(self.trigonometric_function)):
-            def make_dynamic_function(func, index):
+        for index in range(len(self.trigonometric_function)):
+            def make_dynamic_function(i):
                 def dynamic_function():
-                    exec(f"""
-angle_in_degrees = float({self.expression})
-angle_in_radians = math.radians(angle_in_degrees)
-if "{func[index]}" == "sin" or "{func[index]}" == "cos" or "{func[index]}" == "tan":
-    {func[index]}_angle = math.{func[index]}(angle_in_radians)
-else:
-    {func[index]}_angle = 1/math.{func[index-3]}(angle_in_radians)
-self.expression = str({func[index]}_angle)""")
+                    degrees = float(self.expression)
+                    radians = math.radians(degrees)
+                    if i < 3:
+                        angle = eval(f"math.{self.trigonometric_function[i]}(radians)")
+                    else:
+                        angle = eval(f"1/math.{self.trigonometric_function[i-3]}(radians)")
+                    self.expression = str(angle)
                 return dynamic_function
-            setattr(self, f"{self.trigonometric_function[i]}_expression", make_dynamic_function(
-                self.trigonometric_function, i))
+            setattr(self, f"get_{self.trigonometric_function[index]}", make_dynamic_function(index))
 
     def update_expression(self, value: str) -> None:
         if str(self.expression) == "Error":
