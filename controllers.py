@@ -1,6 +1,3 @@
-import decorator
-
-
 class AbstractController(object):
     def __init__(self, model, view):
         pass
@@ -72,25 +69,25 @@ class AdvanceController(AbstractController):
         self.view = view
 
         self.command = [
-            self.sin_expression,
-            self.cos_expression,
-            self.tan_expression,
-            self.sec_expression,
-            self.csc_expression,
-            self.cot_expression,
-            self.get_pi,  # pi
-            self.get_e,
-            self.clear_expression,  # C => 清除輸入
-            self.delete_expression,
+            self.generic_expression("sin_expression"),
+            self.generic_expression("cos_expression"),
+            self.generic_expression("tan_expression"),
+            self.generic_expression("sec_expression"),
+            self.generic_expression("csc_expression"),
+            self.generic_expression("cot_expression"),
+            self.generic_expression("get_pi"),  # pi
+            self.generic_expression("get_e"),
+            self.generic_expression("clear_expression"),  # C => 清除輸入
+            self.generic_expression("delete_expression"),
             "**2",
-            self.get_reciprocal,  # 1/x  => 倒數
-            self.get_abs,
+            self.generic_expression("get_reciprocal"),  # 1/x  => 倒數
+            self.generic_expression("get_abs"),
             ".e+",  # exp => 科學計數法
             "%",
             "** 0.5",  # root 2 => **0.5
             "(",
             ")",
-            self.get_factorial,  # 階乘 x!
+            self.generic_expression("get_factorial"),  # 階乘 x!
             "/",
             "**",
             "7",
@@ -102,16 +99,16 @@ class AdvanceController(AbstractController):
             "5",
             "6",
             "-",
-            self.get_log10,
+            self.generic_expression("get_log10"),
             "1",
             "2",
             "3",
             "+",
-            self.get_logln,    # ln
-            self.set_minus,    # +/-
+            self.generic_expression("get_logln"),  # ln
+            self.generic_expression("set_minus"),  # +/-
             "0",
             ".",
-            self.calculate_expression  # "=" => 計算結果
+            self.generic_expression("calculate_expression")  # "=" => 計算結果
         ]
 
         self.setup()
@@ -121,94 +118,29 @@ class AdvanceController(AbstractController):
         column_size = 5
         for y in range(1, len(symbol) // column_size + 1):
             for x in range(column_size):
-                if type(self.command[(y-1) * column_size + x]) == str:
+                if type(self.command[(y - 1) * column_size + x]) == str:
                     self.view.create_button(
-                        symbol[(y-1) * column_size + x],
+                        symbol[(y - 1) * column_size + x],
                         y,
                         x,
-                        command=lambda symbol=self.command[(
-                            y-1) * column_size + x]: self.update_expression(symbol)
+                        command=lambda symbol=self.command[(y - 1) * column_size + x]: self.update_expression(
+                            symbol)
                     )
                 else:
                     self.view.create_button(
-                        symbol[(y-1) * column_size + x],
+                        symbol[(y - 1) * column_size + x],
                         y,
                         x,
-                        command=self.command[(y-1) * column_size + x]
+                        command=self.command[(y - 1) * column_size + x]
                     )
+
+    def generic_expression(self, model_func: str) -> "action":
+        def action():
+            exec(f"self.model.{model_func}()")
+            self.view.set_output(self.model.expression)
+
+        return action
 
     def update_expression(self, value: str) -> None:
         self.model.update_expression(value)
-        self.view.set_output(self.model.expression)
-
-    def calculate_expression(self) -> None:
-        self.model.calculate_expression()
-        self.view.set_output(self.model.expression)
-
-    def clear_expression(self) -> None:
-        self.model.clear_expression()
-        self.view.set_output(self.model.expression)
-
-    def get_reciprocal(self) -> None:
-        self.model.get_reciprocal()
-        self.calculate_expression()
-
-    def get_10power(self) -> None:
-        self.model.get_10power()
-        self.view.set_output(self.model.expression)
-
-    def delete_expression(self) -> None:
-        self.model.delete_expression()
-        self.view.set_output(self.model.expression)
-
-    def get_factorial(self) -> None:  # 階乘
-        self.model.get_factorial()
-        self.view.set_output(self.model.expression)
-
-    def sin_expression(self) -> None:
-        self.model.sin_expression()
-        self.view.set_output(self.model.expression)
-
-    def cos_expression(self) -> None:
-        self.model.cos_expression()
-        self.view.set_output(self.model.expression)
-
-    def tan_expression(self) -> None:
-        self.model.tan_expression()
-        self.view.set_output(self.model.expression)
-
-    def sec_expression(self) -> None:
-        self.model.sec_expression()
-        self.view.set_output(self.model.expression)
-
-    def csc_expression(self) -> None:
-        self.model.csc_expression()
-        self.view.set_output(self.model.expression)
-
-    def cot_expression(self) -> None:
-        self.model.cot_expression()
-        self.view.set_output(self.model.expression)
-
-    def get_pi(self) -> None:
-        self.model.get_pi()
-        self.view.set_output(self.model.expression)
-
-    def get_e(self) -> None:
-        self.model.get_e()
-        self.view.set_output(self.model.expression)
-
-    def get_log10(self) -> None:
-        self.model.get_log10()
-        self.view.set_output(self.model.expression)
-
-    def get_logln(self) -> None:
-        self.model.get_logln()
-        self.view.set_output(self.model.expression)
-
-    def set_minus(self) -> None:
-        self.model.set_minus()
-        self.view.set_output(self.model.expression)
-
-    def get_abs(self) -> None:
-        self.model.get_abs()
         self.view.set_output(self.model.expression)
