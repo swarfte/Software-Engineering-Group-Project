@@ -14,12 +14,15 @@ class AbstractView(object):
     def get_input(self):
         pass
 
-    def set_output(self):
+    def set_answer_output(self, value):
         pass
 
+    def set_expression_output(self, value):
+        pass
 
 class BaseView(AbstractView):
     def __init__(self, master: tk.Tk):
+        super().__init__(master)
         self.master = master
         self.master.title("Calculator")
 
@@ -29,15 +32,15 @@ class BaseView(AbstractView):
         self.display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
 
     def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None):
-        button = tk.Button(self.master, text=text, width=7,
-                           height=2, font=('Arial', 12), command=command)
+        button = tk.Button(self.master, text=text, width=5,
+                           height=2, font=('Arial', 10), command=command)
         button.grid(row=row, column=column, rowspan=rowspan,
                     columnspan=columnspan, padx=5, pady=5)
 
     def get_input(self):
         return self.display.get()
 
-    def set_output(self, value):
+    def set_answer_output(self, value):
         self.display.delete(0, tk.END)
         self.display.insert(0, value)
 
@@ -47,9 +50,13 @@ class AdvanceView(AbstractView):
         self.master = master
         self.master.title("Science Calculator")
 
-        self.display = tk.Entry(self.master, width=30, font=('Arial', 12))
-        self.display.config(state="readonly")
-        self.display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
+        self.expression_display = tk.Entry(self.master, width=30, font=('Arial', 12))
+        self.expression_display.config(state="readonly")
+        self.expression_display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
+
+        self.answer_display = tk.Entry(self.master, width=30, font=('Arial', 12))
+        self.answer_display.config(state="readonly")
+        self.answer_display.grid(row=1, column=0, columnspan=4, padx=5, pady=5)
 
         self.symbol = [
             "sin",
@@ -94,17 +101,23 @@ class AdvanceView(AbstractView):
             "="
         ]
 
-    def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None):
+    def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None) -> None:
         button = tk.Button(self.master, text=text, width=7,
                            height=2, font=('Arial', 12), command=command)
         button.grid(row=row, column=column, rowspan=rowspan,
                     columnspan=columnspan, padx=5, pady=5)
 
-    def get_input(self):
-        return self.display.get()
+    def get_input(self) -> str:
+        return self.expression_display.get()
 
-    def set_output(self, value):
-        self.display.config(state="normal")
-        self.display.delete(0, tk.END)
-        self.display.insert(0, value)
-        self.display.config(state="readonly")
+    def set_answer_output(self, value) -> None:
+        self.answer_display.config(state="normal")
+        self.answer_display.delete(0, tk.END)
+        self.answer_display.insert(0, value)
+        self.answer_display.config(state="readonly")
+
+    def set_expression_output(self, value:str) -> None:
+        self.expression_display.config(state="normal")
+        self.expression_display.delete(0, tk.END)
+        self.expression_display.insert(0, value)
+        self.expression_display.config(state="readonly")

@@ -37,9 +37,11 @@ class BaseModel(AbstractModel):
         self.expression = ""
 
 
+
 class AdvanceModel(AbstractModel):
     def __init__(self):
         self.expression = ""
+        self.answer = ""
         self.trigonometric_function = [
             "sin",
             "cos",
@@ -49,20 +51,27 @@ class AdvanceModel(AbstractModel):
             "cot",
         ]
 
+        self.replace_map = {
+            "^": "**",
+            "x": "*"
+        }
+
         self.trigonometric_function_setup()
 
     def trigonometric_function_setup(self):
         for index in range(len(self.trigonometric_function)):
             def make_dynamic_function(i):
                 def dynamic_function():
-                    degrees = float(self.expression)
+                    degrees = float(eval(self.expression))
                     radians = math.radians(degrees)
                     if i < 3:
                         angle = eval(f"math.{self.trigonometric_function[i]}(radians)")
                     else:
-                        angle = eval(f"1/math.{self.trigonometric_function[i-3]}(radians)")
-                    self.expression = str(angle)
+                        angle = eval(f"1/math.{self.trigonometric_function[i - 3]}(radians)")
+                    self.answer = str(angle)
+
                 return dynamic_function
+
             setattr(self, f"get_{self.trigonometric_function[index]}", make_dynamic_function(index))
 
     def update_expression(self, value: str) -> None:
@@ -71,35 +80,57 @@ class AdvanceModel(AbstractModel):
         else:
             self.expression = str(self.expression) + value
 
+    def pre_replace_expression(func):
+        """ if the method include the eval() method, it must use this decorator"""
+        def wrapper(self):
+            # replace the symbol so that python eval() can process
+            temp_expression = self.expression[:]
+            for key, value in self.replace_map.items():
+                if key in self.expression:
+                    self.expression = self.expression.replace(key, value)
+
+            # execute the method
+            func(self)
+
+            # replace the symbol back to the human-readable symbol
+            self.expression = temp_expression
+        return wrapper
+
+    @pre_replace_expression
     def calculate_expression(self) -> None:
         try:
             result = str(eval(str(self.expression)))
-            self.expression = result
-        except:
-            self.expression = "Error"
+            self.answer = result
+        except Exception as e:
+            self.answer = "Error"
 
-    def clear_expression(self) -> None:
+    def clear_output(self) -> None:
         self.expression = ""
+        self.answer = ""
 
+    @pre_replace_expression
     def get_reciprocal(self) -> None:
-        self.expression = "1/" + str(self.expression)
+        self.answer = 1 / eval(self.expression)
 
+    @pre_replace_expression
     def get_10power(self) -> None:
-        self.expression = "10**" + str(self.expression)
+        self.answer = 10 ** float(eval(self.expression))
 
     def delete_expression(self) -> None:
-        self.expression = self.expression[0:len(str(self.expression))-1]
+        self.expression = self.expression[0:len(str(self.expression)) - 1]
 
+    @pre_replace_expression
     def get_factorial(self) -> None:  # 階乘
         factorial = 1
-        if int(self.expression) < 0:
-            self.expression = "Error"
-        elif int(self.expression) == 0:
-            self.expression = "1"
+        expression = eval(self.expression)
+        if int(expression) < 0:
+            self.answer = "Error"
+        elif int(expression) == 0:
+            self.answer = "1"
         else:
-            for i in range(1, int(self.expression) + 1):
-                factorial = factorial*i
-            self.expression = factorial
+            for i in range(1, int(expression) + 1):
+                factorial = factorial * i
+            self.answer = factorial
 
     def get_pi(self) -> None:
         self.expression = math.pi
@@ -107,17 +138,21 @@ class AdvanceModel(AbstractModel):
     def get_e(self) -> None:
         self.expression = math.e
 
+    @pre_replace_expression
     def get_log10(self) -> None:
-        self.expression = math.log10(int(self.expression))
+        self.answer = math.log10(float(eval(self.expression)))
 
+    @pre_replace_expression
     def get_logln(self) -> None:
-        self.expression = math.log(int(self.expression))
+        self.answer = math.log(float(eval(self.expression)))
+
 
     def set_minus(self) -> None:
         if int(self.expression) > 0:
             self.expression = "-" + str(self.expression)
         else:
-            self.expression = abs(int(self.expression))
+            self.expression = abs(float(self.expression))
 
+    @pre_replace_expression
     def get_abs(self) -> None:
-        self.expression = abs(int(self.expression))
+        self.answer = abs(float(eval(self.expression)))

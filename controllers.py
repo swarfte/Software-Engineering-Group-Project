@@ -68,47 +68,48 @@ class AdvanceController(AbstractController):
         self.model = model
         self.view = view
 
+
         self.command = [
-            self.generic_expression("get_sin"),
-            self.generic_expression("get_cos"),
-            self.generic_expression("get_tan"),
-            self.generic_expression("get_sec"),
-            self.generic_expression("get_csc"),
-            self.generic_expression("get_cot"),
-            self.generic_expression("get_pi"),  # pi
-            self.generic_expression("get_e"),
-            self.generic_expression("clear_expression"),  # C => 清除輸入
-            self.generic_expression("delete_expression"),
-            "**2",
-            self.generic_expression("get_reciprocal"),  # 1/x  => 倒數
-            self.generic_expression("get_abs"),
+            self.generic_answer_output("get_sin"),
+            self.generic_answer_output("get_cos"),
+            self.generic_answer_output("get_tan"),
+            self.generic_answer_output("get_sec"),
+            self.generic_answer_output("get_csc"),
+            self.generic_answer_output("get_cot"),
+            self.generic_expression_output("get_pi"),  # pi
+            self.generic_expression_output("get_e"),
+            self.clean_output,  # C => 清除輸入
+            self.generic_expression_output("delete_expression"),
+            "^2",
+            self.generic_answer_output("get_reciprocal"),  # 1/x  => 倒數
+            self.generic_answer_output("get_abs"),
             ".e+",  # exp => 科學計數法
             "%",
-            "** 0.5",  # root 2 => **0.5
+            "^0.5",  # root 2 => **0.5
             "(",
             ")",
-            self.generic_expression("get_factorial"),  # 階乘 x!
+            self.generic_answer_output("get_factorial"),  # 階乘 x!
             "/",
-            "**",
+            "^",
             "7",
             "8",
             "9",
-            "*",
-            "10 **",  # 10的N次方
+            "x",
+            self.generic_answer_output("get_10power"),  # 10的N次方
             "4",
             "5",
             "6",
             "-",
-            self.generic_expression("get_log10"),
+            self.generic_answer_output("get_log10"),
             "1",
             "2",
             "3",
             "+",
-            self.generic_expression("get_logln"),  # ln
-            self.generic_expression("set_minus"),  # +/-
+            self.generic_answer_output("get_logln"),  # ln
+            self.generic_answer_output("set_minus"),  # +/-
             "0",
             ".",
-            self.generic_expression("calculate_expression")  # "=" => 計算結果
+            self.generic_answer_output("calculate_expression")  # "=" => 計算結果
         ]
 
         self.setup()
@@ -116,31 +117,46 @@ class AdvanceController(AbstractController):
     def setup(self):
         symbol = self.view.symbol
         column_size = 5
-        for y in range(1, len(symbol) // column_size + 1):
-            for x in range(column_size):
-                if type(self.command[(y - 1) * column_size + x]) == str:
+        remain_row = 2
+        for row in range(remain_row, len(symbol) // column_size + remain_row):
+            for column in range(column_size):
+                if type(self.command[(row - remain_row) * column_size + column]) == str:
                     self.view.create_button(
-                        symbol[(y - 1) * column_size + x],
-                        y,
-                        x,
-                        command=lambda symbol=self.command[(y - 1) * column_size + x]: self.update_expression(
-                            symbol)
+                        symbol[(row - remain_row) * column_size + column],
+                        row,
+                        column,
+                        command=lambda symbol=self.command[(row - remain_row) * column_size + column]: self.update_expression(symbol)
                     )
                 else:
                     self.view.create_button(
-                        symbol[(y - 1) * column_size + x],
-                        y,
-                        x,
-                        command=self.command[(y - 1) * column_size + x]
+                        symbol[(row - remain_row) * column_size + column],
+                        row,
+                        column,
+                        command=self.command[(row - remain_row) * column_size + column]
                     )
 
-    def generic_expression(self, model_func: str) -> "action":
+    def generic_answer_output(self, model_func: str):
         def action():
             exec(f"self.model.{model_func}()")
-            self.view.set_output(self.model.expression)
+            self.view.set_answer_output(self.model.answer)
 
         return action
 
+    def generic_expression_output(self, model_func: str):
+        def action():
+            exec(f"self.model.{model_func}()")
+            self.view.set_expression_output(self.model.expression)
+
+        return action
+
+    def clean_output(self):
+        self.model.clear_output()
+        self.refresh()
+
+    def refresh(self):
+        self.view.set_expression_output(self.model.expression)
+        self.view.set_answer_output(self.model.expression)
+
     def update_expression(self, value: str) -> None:
         self.model.update_expression(value)
-        self.view.set_output(self.model.expression)
+        self.view.set_expression_output(self.model.expression)
