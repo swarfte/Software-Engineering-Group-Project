@@ -58,21 +58,7 @@ class AdvanceModel(AbstractModel):
 
         self.trigonometric_function_setup()
 
-    def trigonometric_function_setup(self):
-        for index in range(len(self.trigonometric_function)):
-            def make_dynamic_function(i):
-                def dynamic_function():
-                    degrees = float(eval(self.expression))
-                    radians = math.radians(degrees)
-                    if i < 3:
-                        angle = eval(f"math.{self.trigonometric_function[i]}(radians)")
-                    else:
-                        angle = eval(f"1/math.{self.trigonometric_function[i - 3]}(radians)")
-                    self.answer = str(angle)
 
-                return dynamic_function
-
-            setattr(self, f"get_{self.trigonometric_function[index]}", make_dynamic_function(index))
 
     def update_expression(self, value: str) -> None:
         if str(self.expression) == "Error":
@@ -95,6 +81,28 @@ class AdvanceModel(AbstractModel):
             # replace the symbol back to the human-readable symbol
             self.expression = temp_expression
         return wrapper
+    def trigonometric_function_setup(self):
+        for index in range(len(self.trigonometric_function)):
+
+            def make_dynamic_function(i):
+                def dynamic_function():
+                    temp_expression = self.expression[:]
+                    for key, value in self.replace_map.items():
+                        if key in self.expression:
+                            self.expression = self.expression.replace(key, value)
+
+                    degrees = float(eval(self.expression))
+                    radians = math.radians(degrees)
+                    if i < 3:
+                        angle = eval(f"math.{self.trigonometric_function[i]}(radians)")
+                    else:
+                        angle = eval(f"1/math.{self.trigonometric_function[i - 3]}(radians)")
+                    self.answer = str(angle)
+                    self.expression = temp_expression
+
+                return dynamic_function
+
+            setattr(self, f"get_{self.trigonometric_function[index]}", make_dynamic_function(index))
 
     @pre_replace_expression
     def calculate_expression(self) -> None:
