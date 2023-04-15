@@ -115,7 +115,7 @@ class AdvanceController(AbstractController):
         self.default_action()
 
     def default_action(self):
-        self.generic_symbol("0")()
+        self.view.set_expression_output("0")
 
     def setup(self):
         symbol = self.view.symbol
