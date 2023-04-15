@@ -82,12 +82,12 @@ class AdvanceController(AbstractController):
             self.generic_expression_output("get_e"),
             self.generic_refresh_output("clear_output"),  # C => 清除輸入
             self.generic_answer_output("delete_answer"),  # 改成刪減答案     #有更改
-            self.generic_symbol("^2"),
+            self.generic_answer_output("get_sqrea"),
             self.generic_refresh_output("get_reciprocal"),  # 1/x  => 倒數   #有更改
             self.generic_answer_output("get_abs"),
             self.generic_symbol(".e+"),  # exp => 科學計數法
             self.generic_symbol("%"),
-            self.generic_symbol("^0.5"),  # root 2 => **0.5
+            self.generic_answer_output("get_root"),  # root 2 => **0.5
             self.generic_symbol("("),
             self.generic_symbol(")"),
             self.generic_answer_output("get_factorial"),  # 階乘 x!
@@ -208,7 +208,12 @@ class AdvanceController(AbstractController):
         similar to generic_symbol, but for number is updated to the answer
         """
         def symbol_action():
-            self.update_answer(symbol)
+            if self.model.symbolholder == "=":
+                self.model.answer = symbol
+                self.model.expression = ""
+                self.refresh()
+            else:
+                self.update_answer(symbol)
 
         return symbol_action
 
@@ -228,3 +233,11 @@ class AdvanceController(AbstractController):
         """
         self.view.set_expression_output(self.model.expression)
         self.view.set_answer_output(self.model.answer)
+
+    def change_clear_mode(self):
+        """
+        change the clear mode
+        When True is all clear
+        When False is clear eixst answer
+        """
+        self.view.set_clear_button(self.button_list[8], self.model.clear_mode)

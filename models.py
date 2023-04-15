@@ -45,10 +45,12 @@ class AdvanceModel(AbstractModel):
         self.expression = ""
         self.answer = ""
         self.isreplace = False  # 可替身狀態 new
+        self.clear_mode = True
+        self.symbolholder = ""  # 儲存上一個輸入的symbol
 
         # the trigonometric function that will dynamically generate by the trigonometric_function_setup() method
         self.trigonometric_function = [
-            "sin"
+            "sin",
             "cos",
             "tan",
             "sec",
@@ -68,40 +70,48 @@ class AdvanceModel(AbstractModel):
         """
         the method is used to update the expression
         """
-        if str(self.expression) and str(self.expression)[-1] in {"+", "-", "*", "/"}:
-            pass
+        self.symbolholder = value
+        #if str(self.expression) and str(self.expression)[-1] in {"+", "-", "*", "/"}:
+            #pass
+        if value == ".e+":
+            self.answer = str(self.answer) + value + "0"
+            self.isreplace = True
         elif str(self.expression) == "0":
             self.expression = str(self.answer) + value
+            self.isreplace = False
         elif self.isreplace:
             self.expression = str(self.answer) + value
             self.isreplace = False
         else:
             self.expression = self.expression + str(self.answer) + value
 
-            def calculate_expression(self) -> None:
-                try:
-                    result = str(eval(str(self.expression[:-1])))
-                    return result
-                except Exception:
-                    return "Error"
+        def calculate_expression(self) -> None:
+            try:
+                result = str(eval(str(self.expression[:-1])))
+                return result
+            except Exception:
+                return "Error"
 
-            self.answer = calculate_expression(self)
-            for key, value in self.replace_map.items():
-                if key in self.expression:
-                    self.expression = self.expression.replace(key, value)
+        for key, value in self.replace_map.items():
+            if key in self.expression:
+                self.expression = self.expression.replace(key, value)
 
-            self.isreplace = True
+        self.answer = calculate_expression(self)
+        self.isreplace = True    
 
     def update_answer(self, value: str) -> None:
         """
         the method is used to update the answer
         """
-        if str(self.answer) == "Error" or str(self.answer) == "0" or self.isreplace and value != ".":
+        if self.symbolholder == ".e+" and self.isreplace:
+            self.answer = str(self.answer[:-1]) + value
+        elif self.symbolholder == "=" and self.isreplace:
             self.answer = value
-            self.isreplace = False
+        elif str(self.answer) == "Error" or str(self.answer) == "0" or self.isreplace and value != ".":
+            self.answer = value
         else:
             self.answer = str(self.answer) + value
-            self.isreplace = False
+        self.isreplace = False
 
     def pre_replace_expression(func):
         """ if the method include the eval() method, it must use this decorator"""
@@ -163,7 +173,7 @@ class AdvanceModel(AbstractModel):
         try:
             if self.expression and str(self.expression[-1]) in {"+", "-", "*", "/"}:
                 self.expression = str(self.expression) + str(self.answer)
-            elif not self.expression:
+            elif not self.expression and self.symbolholder == "=":
                 self.expression = self.answer
             else:
                 last = 0
@@ -183,7 +193,10 @@ class AdvanceModel(AbstractModel):
             for key, value in self.replace_map.items():
                 if key in self.expression:
                     self.expression = self.expression.replace(value, key)
-
+            if self.symbolholder == ".e+":
+                self.expression = self.answer
+            
+            self.symbolholder = "="
             self.isreplace = True
 
         except Exception as e:
@@ -192,8 +205,11 @@ class AdvanceModel(AbstractModel):
     def clear_output(self) -> None:
         """
         this method is used to clear the output
+
         """
-        self.expression = ""
+        if self.clear_mode:
+            self.expression = ""
+        
         self.answer = "0"
 
     def get_reciprocal(self) -> None:
@@ -234,7 +250,7 @@ class AdvanceModel(AbstractModel):
         this method is used to get the factorial of the answer
         """
         factorial = 1
-        expression = eval(self.expression)
+        expression = eval(str(self.answer))
         if int(expression) < 0:
             self.answer = "Error"
         elif int(expression) == 0:
@@ -285,4 +301,12 @@ class AdvanceModel(AbstractModel):
         """
         this method is used to get the absolute value of the answer
         """
-        self.answer = abs(float(eval(self.expression)))
+        self.answer = abs(int(eval(self.answer)))
+
+    @pre_replace_expression
+    def get_sqrea(self) -> None:
+        self.answer = str(math.pow(float(eval(self.answer)), 2))
+
+    @pre_replace_expression
+    def get_root(self) -> None:
+        self.answer = str(math.sqrt(float(eval(self.answer))))

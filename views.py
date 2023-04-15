@@ -157,3 +157,9 @@ class AdvanceView(AbstractView):
         self.expression_display.delete(0, tk.END)
         self.expression_display.insert(0, value)
         self.expression_display.config(state="readonly")
+
+    def set_clear_button(self, button:ttk.Button, clear_mode:bool) -> None:
+        if clear_mode:
+            button.config(text="C")
+        else :
+            button.config(text="CE")
