@@ -1,3 +1,6 @@
+import ttkbootstrap as ttk
+
+
 class AbstractController(object):
     def __init__(self, model, view):
         pass
@@ -111,26 +114,40 @@ class AdvanceController(AbstractController):
             self.generic_refresh_output("calculate_expression")  # "=" => 計算結果
         ]
 
+        self.button_list = []
+
+        #self.view.root.bind("<Configure>", self.resize_button)
+
         self.setup()
         self.default_action()
+
+    def resize_button(self,event):
+
+        window_width = event.width
+        print(window_width)
+        window_height = event.height
+
+        for button in self.button_list:
+            button.configure(width=int(window_width * 00.2))
 
     def default_action(self):
         self.view.set_expression_output("0")
 
     def setup(self):
+
         symbol = self.view.symbol
         column_size = 5
         remain_row = 2
         for row in range(remain_row, len(symbol) // column_size + remain_row):
             for column in range(column_size):
-                print(self.command[(row - remain_row) * column_size + column].__name__)
-                self.view.create_button(
-                    symbol[(row - remain_row) * column_size + column],
+                index = (row - remain_row) * column_size + column
+                self.button_list.append(self.view.create_button(
+                    symbol[index],
                     row,
                     column,
-                    command=self.command[(row - remain_row) * column_size + column],
-                    bootstyle=self.set_button_color(self.command[(row - remain_row) * column_size + column].__name__)
-                )
+                    command=self.command[index],
+                    bootstyle=self.set_button_color(self.command[index].__name__)
+                ))
 
     def set_button_color(self,button_name:str) -> str:
         if button_name == "answer_action":
