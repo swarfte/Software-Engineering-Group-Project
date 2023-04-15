@@ -78,37 +78,37 @@ class AdvanceController(AbstractController):
             self.generic_answer_output("get_cot"),
             self.generic_expression_output("get_pi"),  # pi
             self.generic_expression_output("get_e"),
-            self.clean_output,  # C => 清除輸入
+            self.generic_refresh_output("clear_output"),  # C => 清除輸入
             self.generic_expression_output("delete_expression"),
-            "^2",
+            self.generic_symbol("^2"),
             self.generic_answer_output("get_reciprocal"),  # 1/x  => 倒數
             self.generic_answer_output("get_abs"),
-            ".e+",  # exp => 科學計數法
-            "%",
-            "^0.5",  # root 2 => **0.5
-            "(",
-            ")",
+            self.generic_symbol(".e+"),  # exp => 科學計數法
+            self.generic_symbol("%"),
+            self.generic_symbol("^0.5"),  # root 2 => **0.5
+            self.generic_symbol("("),
+            self.generic_symbol(")"),
             self.generic_answer_output("get_factorial"),  # 階乘 x!
-            "/",
-            "^",
-            "7",
-            "8",
-            "9",
-            "x",
+            self.generic_symbol("/"),
+            self.generic_symbol("^"),
+            self.generic_symbol("7"),
+            self.generic_symbol("8"),
+            self.generic_symbol("9"),
+            self.generic_symbol("x"),
             self.generic_answer_output("get_10power"),  # 10的N次方
-            "4",
-            "5",
-            "6",
-            "-",
+            self.generic_symbol("4"),
+            self.generic_symbol("5"),
+            self.generic_symbol("6"),
+            self.generic_symbol("-"),
             self.generic_answer_output("get_log10"),
-            "1",
-            "2",
-            "3",
-            "+",
+            self.generic_symbol("1"),
+            self.generic_symbol("2"),
+            self.generic_symbol("3"),
+            self.generic_symbol("+"),
             self.generic_answer_output("get_logln"),  # ln
             self.generic_expression_output("set_minus"),  # +/-
-            "0",
-            ".",
+            self.generic_symbol("0"),
+            self.generic_symbol("."),
             self.generic_answer_output("calculate_expression")  # "=" => 計算結果
         ]
 
@@ -120,20 +120,17 @@ class AdvanceController(AbstractController):
         remain_row = 2
         for row in range(remain_row, len(symbol) // column_size + remain_row):
             for column in range(column_size):
-                if type(self.command[(row - remain_row) * column_size + column]) == str:
-                    self.view.create_button(
-                        symbol[(row - remain_row) * column_size + column],
-                        row,
-                        column,
-                        command=lambda symbol=self.command[(row - remain_row) * column_size + column]: self.update_expression(symbol)
-                    )
-                else:
-                    self.view.create_button(
-                        symbol[(row - remain_row) * column_size + column],
-                        row,
-                        column,
-                        command=self.command[(row - remain_row) * column_size + column]
-                    )
+                self.view.create_button(
+                    symbol[(row - remain_row) * column_size + column],
+                    row,
+                    column,
+                    command=self.command[(row - remain_row) * column_size + column]
+                )
+
+    def update_expression(self, value: str) -> None:
+        self.model.update_expression(value)
+        self.view.set_expression_output(self.model.expression)
+
 
     def generic_answer_output(self, model_func: str):
         def action():
@@ -149,14 +146,19 @@ class AdvanceController(AbstractController):
 
         return action
 
-    def clean_output(self):
-        self.model.clear_output()
-        self.refresh()
+    def generic_symbol(self, symbol: str):
+        def action():
+            self.update_expression(symbol)
+
+        return action
+
+    def generic_refresh_output(self, model_func: str):
+        def action():
+            exec(f"self.model.{model_func}()")
+            self.refresh()
+
+        return action
 
     def refresh(self):
         self.view.set_expression_output(self.model.expression)
         self.view.set_answer_output(self.model.expression)
-
-    def update_expression(self, value: str) -> None:
-        self.model.update_expression(value)
-        self.view.set_expression_output(self.model.expression)
