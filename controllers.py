@@ -80,7 +80,7 @@ class AdvanceController(AbstractController):
             self.generic_refresh_output("clear_output"),  # C => 清除輸入
             self.generic_expression_output("delete_expression"),
             self.generic_symbol("^2"),
-            self.generic_answer_output("get_reciprocal"),  # 1/x  => 倒數
+            self.generic_refresh_output("get_reciprocal"),  # 1/x  => 倒數
             self.generic_answer_output("get_abs"),
             self.generic_symbol(".e+"),  # exp => 科學計數法
             self.generic_symbol("%"),
@@ -115,7 +115,7 @@ class AdvanceController(AbstractController):
         self.default_action()
 
     def default_action(self):
-        self.view.set_expression_output("0")
+        self.generic_symbol("0")()
 
     def setup(self):
         symbol = self.view.symbol
@@ -163,4 +163,4 @@ class AdvanceController(AbstractController):
 
     def refresh(self):
         self.view.set_expression_output(self.model.expression)
-        self.view.set_answer_output(self.model.expression)
+        self.view.set_answer_output(self.model.answer)

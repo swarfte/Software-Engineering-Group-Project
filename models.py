@@ -113,12 +113,22 @@ class AdvanceModel(AbstractModel):
             self.answer = "Error"
 
     def clear_output(self) -> None:
-        self.expression = ""
+        self.expression = "0"
         self.answer = ""
 
-    @pre_replace_expression
     def get_reciprocal(self) -> None:
-        self.answer = 1 / eval(self.expression)
+        self.expression = "1/" + str(self.expression)
+        #self.answer = float(eval(self.expression))
+
+            # replace the symbol so that python eval() can process
+        temp_expression = self.expression[:]
+        for key, value in self.replace_map.items():
+            if key in self.expression:
+                self.expression = self.expression.replace(key, value)
+
+        # replace the symbol back to the human-readable symbol
+        self.answer = float(eval(temp_expression))
+        
 
     @pre_replace_expression
     def get_10power(self) -> None:
