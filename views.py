@@ -1,7 +1,8 @@
 
 
 import tkinter as tk
-import ttkbootstrap as ttk
+from tkinter import ttk
+
 class AbstractView(object):
 
     def __init__(self, master):
@@ -22,16 +23,16 @@ class AbstractView(object):
 class BaseView(AbstractView):
     def __init__(self, master: tk.Tk):
         super().__init__(master)
-        self.root = master
-        self.root.title("Calculator")
+        self.master = master
+        self.master.title("Calculator")
 
         # Create the entry field
-        self.display = tk.Entry(self.root, width=30,
+        self.display = tk.Entry(self.master, width=30,
                                 font=('Arial', 12))
         self.display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
 
     def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None):
-        button = tk.Button(self.root, text=text, width=5,
+        button = tk.Button(self.master, text=text, width=5,
                            height=2, font=('Arial', 10), command=command)
         button.grid(row=row, column=column, rowspan=rowspan,
                     columnspan=columnspan, padx=5, pady=5)
@@ -46,20 +47,16 @@ class BaseView(AbstractView):
 
 class AdvanceView(AbstractView):
     def __init__(self, master: tk.Tk):
-        self.root = master
-        self.root.title("Science Calculator")
+        self.master = master
+        self.master.title("Science Calculator")
 
-        entry_style = ttk.Style()
-        entry_style.configure('Custom.TEntry', borderwidth=0, highlightthickness=0,bootstyle="dark")
-        font_size = 37
-        entry_width = 20
-        self.expression_display = ttk.Entry(self.root, width=entry_width, font=('Arial', font_size), style ='Custom.TEntry')
+        self.expression_display = ttk.Entry(self.master, width=30, font=('Arial', 12), bootstyle="primary")
         self.expression_display.config(state="readonly")
-        self.expression_display.grid(row=0, column=0, columnspan=5, padx=0, pady=0)
+        self.expression_display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
 
-        self.answer_display = ttk.Entry(self.root, width=entry_width, font=('Arial', font_size), style ='Custom.TEntry')
+        self.answer_display = ttk.Entry(self.master, width=30, font=('Arial', 12) , bootstyle="success")
         self.answer_display.config(state="readonly")
-        self.answer_display.grid(row=1, column=0, columnspan=5, padx=0, pady=0)
+        self.answer_display.grid(row=1, column=0, columnspan=4, padx=5, pady=5)
 
         self.symbol = [
             "sin",
@@ -104,12 +101,11 @@ class AdvanceView(AbstractView):
             "="
         ]
 
-
     def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None , bootstyle=None) -> ttk.Button:
-        button = ttk.Button(self.root, text=text, width=10,
+        button = ttk.Button(self.master, text=text, width=7,
                             command=command, bootstyle=bootstyle)
         button.grid(row=row, column=column, rowspan=rowspan,
-                    columnspan=columnspan, padx=1, pady=1,sticky='w')
+                    columnspan=columnspan, padx=5, pady=5)
 
         return button
     def get_input(self) -> str:

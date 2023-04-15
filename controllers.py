@@ -1,6 +1,3 @@
-import ttkbootstrap as ttk
-
-
 class AbstractController(object):
     def __init__(self, model, view):
         pass
@@ -81,9 +78,9 @@ class AdvanceController(AbstractController):
             self.generic_expression_output("get_pi"),  # pi
             self.generic_expression_output("get_e"),
             self.generic_refresh_output("clear_output"),  # C => 清除輸入
-            self.generic_expression_output("delete_expression"), # delete => 删除表达式
+            self.generic_answer_output("delete_answer"),  # 改成刪減答案     #有更改
             self.generic_symbol("^2"),
-            self.generic_answer_output("get_reciprocal"),  # 1/x  => 倒數
+            self.generic_refresh_output("get_reciprocal"),  # 1/x  => 倒數   #有更改
             self.generic_answer_output("get_abs"),
             self.generic_symbol(".e+"),  # exp => 科學計數法
             self.generic_symbol("%"),
@@ -93,102 +90,88 @@ class AdvanceController(AbstractController):
             self.generic_answer_output("get_factorial"),  # 階乘 x!
             self.generic_symbol("/"),
             self.generic_symbol("^"),
-            self.generic_symbol("7"),
-            self.generic_symbol("8"),
-            self.generic_symbol("9"),
+            self.generic_symbol_num("7"),       #有更改
+            self.generic_symbol_num("8"),       #有更改
+            self.generic_symbol_num("9"),       #有更改   
             self.generic_symbol("x"),
             self.generic_answer_output("get_10power"),  # 10的N次方
-            self.generic_symbol("4"),
-            self.generic_symbol("5"),
-            self.generic_symbol("6"),
+            self.generic_symbol_num("4"),       #有更改
+            self.generic_symbol_num("5"),       #有更改
+            self.generic_symbol_num("6"),       #有更改
             self.generic_symbol("-"),
             self.generic_answer_output("get_log10"),
-            self.generic_symbol("1"),
-            self.generic_symbol("2"),
-            self.generic_symbol("3"),
+            self.generic_symbol_num("1"),       #有更改
+            self.generic_symbol_num("2"),       #有更改
+            self.generic_symbol_num("3"),       #有更改
             self.generic_symbol("+"),
             self.generic_answer_output("get_logln"),  # ln
             self.generic_expression_output("set_minus"),  # +/-
-            self.generic_symbol("0"),
-            self.generic_symbol("."),
-            self.generic_refresh_output("calculate_expression")  # "=" => 計算結果
+            self.generic_symbol_num("0"),       #有更改
+            self.generic_symbol_num("."),       #有更改
+            self.generic_answer_output("calculate_expression")  # "=" => 計算結果       #有更改
         ]
-
-        self.button_list = []
-
-        #self.view.root.bind("<Configure>", self.resize_button)
 
         self.setup()
         self.default_action()
 
-    def resize_button(self,event):
-
-        window_width = event.width
-        print(window_width)
-        window_height = event.height
-
-        for button in self.button_list:
-            button.configure(width=int(window_width * 00.2))
-
     def default_action(self):
-        self.view.set_expression_output("0")
+        self.generic_symbol_num("0")()
 
     def setup(self):
-
         symbol = self.view.symbol
         column_size = 5
         remain_row = 2
         for row in range(remain_row, len(symbol) // column_size + remain_row):
             for column in range(column_size):
-                index = (row - remain_row) * column_size + column
-                self.button_list.append(self.view.create_button(
-                    symbol[index],
+                self.view.create_button(
+                    symbol[(row - remain_row) * column_size + column],
                     row,
                     column,
-                    command=self.command[index],
-                    bootstyle=self.set_button_color(self.command[index].__name__)
-                ))
+                    command=self.command[(row - remain_row) * column_size + column],
+                )
 
-    def set_button_color(self,button_name:str) -> str:
-        if button_name == "answer_action":
-            return "info"
-        elif button_name == "expression_action":
-            return "success"
-        elif button_name == "refresh_action":
-            return "danger"
-        else:
-            return "dark"
-
-    def update_expression(self, value: str) -> None:
+    def update_expression(self, value: str) -> None:           #有更改
         self.model.update_expression(value)
         self.view.set_expression_output(self.model.expression)
+        self.view.set_answer_output(self.model.answer)
 
-    def generic_answer_output(self, model_func: str):
-        def answer_action():
+    def update_answer(self, value: str) -> None:                #有更改
+        self.model.update_answer(value)
+        self.view.set_answer_output(self.model.answer)
+
+    def generic_answer_output(self, model_func: str):             #有更改
+        def action():
+            exec(f"self.model.{model_func}()")
+            self.view.set_answer_output(self.model.answer)
+            self.view.set_expression_output(self.model.expression)
+
+        return action
+
+    def generic_expression_output(self, model_func: str):          #有更改
+        def action():
             exec(f"self.model.{model_func}()")
             self.view.set_answer_output(self.model.answer)
 
-        return answer_action
-
-    def generic_expression_output(self, model_func: str):
-        def expression_action():
-            exec(f"self.model.{model_func}()")
-            self.view.set_expression_output(self.model.expression)
-
-        return expression_action
+        return action
 
     def generic_symbol(self, symbol: str):
-        def symbol_action():
+        def action():
             self.update_expression(symbol)
 
-        return symbol_action
+        return action
+
+    def generic_symbol_num(self, symbol: str):            #new 
+        def action():
+            self.update_answer(symbol)
+
+        return action
 
     def generic_refresh_output(self, model_func: str):
-        def refresh_action():
+        def action():
             exec(f"self.model.{model_func}()")
             self.refresh()
 
-        return refresh_action
+        return action
 
     def refresh(self):
         self.view.set_expression_output(self.model.expression)
