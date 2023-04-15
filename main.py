@@ -2,12 +2,11 @@ import tkinter as tk
 import models
 import views
 import controllers
-import ttkbootstrap as bootstrap
+import ttkbootstrap as ttk
 
 
 def original_calculator() -> None:
-    style = bootstrap.Style(theme='darkly')
-    root = style.master
+    root = tk.Tk()
     model = models.BaseModel()
     view = views.BaseView(root)
     controller = controllers.BaseController(model, view)
@@ -15,8 +14,11 @@ def original_calculator() -> None:
 
 
 def advance_calculator() -> None:
-    root = tk.Tk()
+    # the root windows
+    root = ttk.Window(themename="darkly")
     root.geometry()
+
+    # use the MVC pattern to build the calculator
     model = models.AdvanceModel()
     view = views.AdvanceView(root)
     controller = controllers.AdvanceController(model, view)

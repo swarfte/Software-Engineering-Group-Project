@@ -64,10 +64,13 @@ class BaseController(AbstractController):
 
 
 class AdvanceController(AbstractController):
+    """
+    the modern calculator has a lot of function, so I use a list to store the function
+    """
     def __init__(self, model, view):
         self.model = model
         self.view = view
-
+        self.button_list = []
         self.command = [
             self.generic_answer_output("get_sin"),
             self.generic_answer_output("get_cos"),
@@ -92,7 +95,7 @@ class AdvanceController(AbstractController):
             self.generic_symbol("^"),
             self.generic_symbol_num("7"),       #有更改
             self.generic_symbol_num("8"),       #有更改
-            self.generic_symbol_num("9"),       #有更改   
+            self.generic_symbol_num("9"),       #有更改
             self.generic_symbol("x"),
             self.generic_expression_output("get_10power"),  # 10的N次方
             self.generic_symbol_num("4"),       #有更改
@@ -115,64 +118,113 @@ class AdvanceController(AbstractController):
         self.default_action()
 
     def default_action(self):
+        """
+        set what action should be done when the calculator is first opened
+        """
         self.generic_symbol_num("0")()
 
     def setup(self):
+        """
+        to build the button and bind the command to the corresponding button
+        """
         symbol = self.view.symbol
+        # we split the button to 5 columns
         column_size = 5
+
+        # we have 2 entries , so remap two row for the entries
         remain_row = 2
         for row in range(remain_row, len(symbol) // column_size + remain_row):
             for column in range(column_size):
-                self.view.create_button(
-                    symbol[(row - remain_row) * column_size + column],
+                index = (row - remain_row) * column_size + column
+                self.button_list.append(self.view.create_button(
+                    symbol[index],
                     row,
                     column,
-                    command=self.command[(row - remain_row) * column_size + column],
-                )
+                    command=self.command[index],
+                    bootstyle=self.set_button_color(self.command[index].__name__)
+                ))
 
-    def update_expression(self, value: str) -> None:           #有更改
+    def set_button_color(self, button_name: str) -> str:
+        """
+        based on the button name, set the button color
+        """
+        if button_name == "answer_action":
+            return "info"
+        elif button_name == "expression_action":
+            return "success"
+        elif button_name == "refresh_action":
+            return "danger"
+        else:
+            return "dark"
+
+
+    def update_expression(self, value: str) -> None:
+        """
+        update the expression entry
+        """
         self.model.update_expression(value)
         self.view.set_expression_output(self.model.expression)
         self.view.set_answer_output(self.model.answer)
 
-    def update_answer(self, value: str) -> None:                #有更改
+    def update_answer(self, value: str) -> None:
+        """
+        update the answer entry
+        """
         self.model.update_answer(value)
         self.view.set_answer_output(self.model.answer)
 
-    def generic_answer_output(self, model_func: str):             #有更改
-        def action():
+    def generic_answer_output(self, model_func: str):
+        """
+        a generic function to bind the model function to the button
+        """
+        def answer_action():
             exec(f"self.model.{model_func}()")
             self.view.set_answer_output(self.model.answer)
             self.view.set_expression_output(self.model.expression)
 
-        return action
+        return answer_action
 
-    def generic_expression_output(self, model_func: str):          #有更改
-        def action():
+    def generic_expression_output(self, model_func: str):
+        """
+        a generic function to bind the model function to the button
+        """
+        def expression_action():
             exec(f"self.model.{model_func}()")
             self.view.set_answer_output(self.model.answer)
 
-        return action
+        return expression_action
 
     def generic_symbol(self, symbol: str):
-        def action():
+        """
+        a generic function to bind the symbol to the button
+        """
+        def symbol_action():
             self.update_expression(symbol)
 
-        return action
+        return symbol_action
 
-    def generic_symbol_num(self, symbol: str):            #new 
-        def action():
+    def generic_symbol_num(self, symbol: str):
+        """
+        similar to generic_symbol, but for number is updated to the answer
+        """
+        def symbol_action():
             self.update_answer(symbol)
 
-        return action
+        return symbol_action
 
     def generic_refresh_output(self, model_func: str):
-        def action():
+        """
+        a generic function to bind the model function to the button, and it will update the expression and answer
+        """
+        def refresh_action():
             exec(f"self.model.{model_func}()")
             self.refresh()
 
-        return action
+        return refresh_action
 
     def refresh(self):
+        """
+        update the expression and answer
+        """
         self.view.set_expression_output(self.model.expression)
         self.view.set_answer_output(self.model.answer)
