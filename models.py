@@ -45,8 +45,8 @@ class AdvanceModel(AbstractModel):
         self.expression = ""
         self.answer = ""
         self.isreplace = False  # 可替身狀態 new
-        self.clear_mode = True
         self.symbolholder = ""  # 儲存上一個輸入的symbol
+        self.clear_mode: True
 
         # the trigonometric function that will dynamically generate by the trigonometric_function_setup() method
         self.trigonometric_function = [
@@ -103,6 +103,7 @@ class AdvanceModel(AbstractModel):
         """
         the method is used to update the answer
         """
+        self.clear_mode = False
         if self.symbolholder == ".e+" and self.isreplace:
             self.answer = str(self.answer[:-1]) + value
         elif self.symbolholder == "=" and self.isreplace:
@@ -205,12 +206,11 @@ class AdvanceModel(AbstractModel):
     def clear_output(self) -> None:
         """
         this method is used to clear the output
-
         """
         if self.clear_mode:
             self.expression = ""
-        
         self.answer = "0"
+        self.clear_mode = True
 
     def get_reciprocal(self) -> None:
         """

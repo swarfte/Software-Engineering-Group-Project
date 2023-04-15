@@ -172,6 +172,7 @@ class AdvanceController(AbstractController):
         """
         self.model.update_answer(value)
         self.view.set_answer_output(self.model.answer)
+        self.view.set_clear_button(self.button_list[8], self.model.clear_mode)
 
     def generic_answer_output(self, model_func: str):
         """
@@ -191,6 +192,7 @@ class AdvanceController(AbstractController):
         def expression_action():
             exec(f"self.model.{model_func}()")
             self.view.set_answer_output(self.model.answer)
+            self.view.set_expression_output(self.model.expression)
 
         return expression_action
 
@@ -233,11 +235,4 @@ class AdvanceController(AbstractController):
         """
         self.view.set_expression_output(self.model.expression)
         self.view.set_answer_output(self.model.answer)
-
-    def change_clear_mode(self):
-        """
-        change the clear mode
-        When True is all clear
-        When False is clear eixst answer
-        """
         self.view.set_clear_button(self.button_list[8], self.model.clear_mode)
