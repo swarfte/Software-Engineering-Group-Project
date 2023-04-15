@@ -68,7 +68,6 @@ class AdvanceController(AbstractController):
         self.model = model
         self.view = view
 
-
         self.command = [
             self.generic_answer_output("get_sin"),
             self.generic_answer_output("get_cos"),
@@ -113,6 +112,10 @@ class AdvanceController(AbstractController):
         ]
 
         self.setup()
+        self.default_action()
+
+    def default_action(self):
+        self.generic_symbol("0")()
 
     def setup(self):
         symbol = self.view.symbol
@@ -124,13 +127,12 @@ class AdvanceController(AbstractController):
                     symbol[(row - remain_row) * column_size + column],
                     row,
                     column,
-                    command=self.command[(row - remain_row) * column_size + column]
+                    command=self.command[(row - remain_row) * column_size + column],
                 )
 
     def update_expression(self, value: str) -> None:
         self.model.update_expression(value)
         self.view.set_expression_output(self.model.expression)
-
 
     def generic_answer_output(self, model_func: str):
         def action():

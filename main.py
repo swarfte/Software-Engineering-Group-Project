@@ -2,10 +2,12 @@ import tkinter as tk
 import models
 import views
 import controllers
+import ttkbootstrap as bootstrap
 
 
 def original_calculator() -> None:
-    root = tk.Tk()
+    style = bootstrap.Style(theme='darkly')
+    root = style.master
     model = models.BaseModel()
     view = views.BaseView(root)
     controller = controllers.BaseController(model, view)
@@ -14,7 +16,7 @@ def original_calculator() -> None:
 
 def advance_calculator() -> None:
     root = tk.Tk()
-    root.geometry("450x550")
+    root.geometry()
     model = models.AdvanceModel()
     view = views.AdvanceView(root)
     controller = controllers.AdvanceController(model, view)

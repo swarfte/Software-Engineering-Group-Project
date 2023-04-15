@@ -1,7 +1,7 @@
 
 
 import tkinter as tk
-
+from tkinter import ttk
 
 class AbstractView(object):
 
@@ -50,11 +50,11 @@ class AdvanceView(AbstractView):
         self.master = master
         self.master.title("Science Calculator")
 
-        self.expression_display = tk.Entry(self.master, width=30, font=('Arial', 12))
+        self.expression_display = ttk.Entry(self.master, width=30, font=('Arial', 12), bootstyle="primary")
         self.expression_display.config(state="readonly")
         self.expression_display.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
 
-        self.answer_display = tk.Entry(self.master, width=30, font=('Arial', 12))
+        self.answer_display = ttk.Entry(self.master, width=30, font=('Arial', 12) , bootstyle="success")
         self.answer_display.config(state="readonly")
         self.answer_display.grid(row=1, column=0, columnspan=4, padx=5, pady=5)
 
@@ -101,12 +101,13 @@ class AdvanceView(AbstractView):
             "="
         ]
 
-    def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None) -> None:
-        button = tk.Button(self.master, text=text, width=7,
-                           height=2, font=('Arial', 12), command=command)
+    def create_button(self, text, row, column, rowspan=1, columnspan=1, command=None , bootstyle=None) -> ttk.Button:
+        button = ttk.Button(self.master, text=text, width=7,
+                            command=command, bootstyle=bootstyle)
         button.grid(row=row, column=column, rowspan=rowspan,
                     columnspan=columnspan, padx=5, pady=5)
 
+        return button
     def get_input(self) -> str:
         return self.expression_display.get()
 
