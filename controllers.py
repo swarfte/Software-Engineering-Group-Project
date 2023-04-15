@@ -81,7 +81,7 @@ class AdvanceController(AbstractController):
             self.generic_expression_output("get_pi"),  # pi
             self.generic_expression_output("get_e"),
             self.generic_refresh_output("clear_output"),  # C => 清除輸入
-            self.generic_expression_output("delete_expression"),
+            self.generic_expression_output("delete_expression"), # delete => 删除表达式
             self.generic_symbol("^2"),
             self.generic_answer_output("get_reciprocal"),  # 1/x  => 倒數
             self.generic_answer_output("get_abs"),
