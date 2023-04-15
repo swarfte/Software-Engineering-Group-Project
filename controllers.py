@@ -94,7 +94,7 @@ class AdvanceController(AbstractController):
             self.generic_symbol_num("8"),       #有更改
             self.generic_symbol_num("9"),       #有更改   
             self.generic_symbol("x"),
-            self.generic_answer_output("get_10power"),  # 10的N次方
+            self.generic_expression_output("get_10power"),  # 10的N次方
             self.generic_symbol_num("4"),       #有更改
             self.generic_symbol_num("5"),       #有更改
             self.generic_symbol_num("6"),       #有更改

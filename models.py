@@ -115,12 +115,12 @@ class AdvanceModel(AbstractModel):
 
             def make_dynamic_function(i):
                 def dynamic_function():
-                    temp_expression = self.expression[:]
+                    temp_expression = self.answer[:]
                     for key, value in self.replace_map.items():
                         if key in self.expression:
                             self.expression = self.expression.replace(key, value)
 
-                    degrees = float(eval(self.expression))
+                    degrees = float(eval(str(self.answer)))
                     radians = math.radians(degrees)
                     if i < 3:
                         angle = eval(f"math.{self.trigonometric_function[i]}(radians)")
@@ -184,12 +184,12 @@ class AdvanceModel(AbstractModel):
 
         # replace the symbol back to the human-readable symbol
         self.answer = float(eval(temp_expression))
-        #self.isreplace = True
+        self.isreplace = True
         
 
     @pre_replace_expression
     def get_10power(self) -> None:
-        self.answer = 10 ** float(eval(self.expression))
+        self.answer = 10 ** float(eval(str(self.answer)))
 
     def delete_answer(self) -> None:
         self.answer = self.answer[0:len(str(self.expression)) - 1]
@@ -208,10 +208,10 @@ class AdvanceModel(AbstractModel):
             self.answer = factorial
 
     def get_pi(self) -> None:
-        self.expression = math.pi
+        self.answer = math.pi       #有更改
 
     def get_e(self) -> None:
-        self.expression = math.e
+        self.answer = math.e        #有更改
 
     @pre_replace_expression
     def get_log10(self) -> None:
