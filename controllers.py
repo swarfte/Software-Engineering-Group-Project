@@ -106,7 +106,7 @@ class AdvanceController(AbstractController):
             "3",
             "+",
             self.generic_answer_output("get_logln"),  # ln
-            self.generic_answer_output("set_minus"),  # +/-
+            self.generic_expression_output("set_minus"),  # +/-
             "0",
             ".",
             self.generic_answer_output("calculate_expression")  # "=" => 計算結果

@@ -155,11 +155,14 @@ class AdvanceModel(AbstractModel):
         self.answer = math.log(float(eval(self.expression)))
 
 
+
     def set_minus(self) -> None:
-        if int(self.expression) > 0:
-            self.expression = "-" + str(self.expression)
+        expression = float(self.expression)
+        print(expression)
+        if expression > 0:
+            self.expression = "-" + str(expression)
         else:
-            self.expression = abs(float(self.expression))
+            self.expression = str(abs(expression))
 
     @pre_replace_expression
     def get_abs(self) -> None:
