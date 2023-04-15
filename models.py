@@ -113,7 +113,7 @@ class AdvanceModel(AbstractModel):
             self.answer = "Error"
 
     def clear_output(self) -> None:
-        self.expression = "0"
+        self.expression = ""
         self.answer = ""
 
     def get_reciprocal(self) -> None:

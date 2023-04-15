@@ -15,7 +15,6 @@ def original_calculator() -> None:
 
 
 def advance_calculator() -> None:
-    #root = tk.Tk()
     root = ttk.Window(themename="darkly")
     root.geometry()
     model = models.AdvanceModel()

@@ -108,7 +108,7 @@ class AdvanceController(AbstractController):
             self.generic_expression_output("set_minus"),  # +/-
             self.generic_symbol("0"),
             self.generic_symbol("."),
-            self.generic_answer_output("calculate_expression")  # "=" => 計算結果
+            self.generic_refresh_output("calculate_expression")  # "=" => 計算結果
         ]
 
         self.setup()
@@ -123,44 +123,56 @@ class AdvanceController(AbstractController):
         remain_row = 2
         for row in range(remain_row, len(symbol) // column_size + remain_row):
             for column in range(column_size):
+                print(self.command[(row - remain_row) * column_size + column].__name__)
                 self.view.create_button(
                     symbol[(row - remain_row) * column_size + column],
                     row,
                     column,
                     command=self.command[(row - remain_row) * column_size + column],
+                    bootstyle=self.set_button_color(self.command[(row - remain_row) * column_size + column].__name__)
                 )
+
+    def set_button_color(self,button_name:str) -> str:
+        if button_name == "answer_action":
+            return "info"
+        elif button_name == "expression_action":
+            return "success"
+        elif button_name == "refresh_action":
+            return "danger"
+        else:
+            return "dark"
 
     def update_expression(self, value: str) -> None:
         self.model.update_expression(value)
         self.view.set_expression_output(self.model.expression)
 
     def generic_answer_output(self, model_func: str):
-        def action():
+        def answer_action():
             exec(f"self.model.{model_func}()")
             self.view.set_answer_output(self.model.answer)
 
-        return action
+        return answer_action
 
     def generic_expression_output(self, model_func: str):
-        def action():
+        def expression_action():
             exec(f"self.model.{model_func}()")
             self.view.set_expression_output(self.model.expression)
 
-        return action
+        return expression_action
 
     def generic_symbol(self, symbol: str):
-        def action():
+        def symbol_action():
             self.update_expression(symbol)
 
-        return action
+        return symbol_action
 
     def generic_refresh_output(self, model_func: str):
-        def action():
+        def refresh_action():
             exec(f"self.model.{model_func}()")
             self.refresh()
 
-        return action
+        return refresh_action
 
     def refresh(self):
         self.view.set_expression_output(self.model.expression)
-        self.view.set_answer_output(self.model.expression)
+        self.view.set_answer_output(self.model.answer)
