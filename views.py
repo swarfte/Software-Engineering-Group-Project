@@ -1,8 +1,7 @@
 
 
 import tkinter as tk
-from tkinter import ttk
-
+import ttkbootstrap as ttk
 class AbstractView(object):
 
     def __init__(self, master):

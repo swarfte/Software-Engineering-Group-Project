@@ -91,7 +91,7 @@ class AdvanceModel(AbstractModel):
                         if key in self.expression:
                             self.expression = self.expression.replace(key, value)
 
-                    degrees = float(eval(self.expression))
+                    degrees = eval(self.expression)
                     radians = math.radians(degrees)
                     if i < 3:
                         angle = eval(f"math.{self.trigonometric_function[i]}(radians)")
@@ -168,7 +168,6 @@ class AdvanceModel(AbstractModel):
 
     def set_minus(self) -> None:
         expression = float(self.expression)
-        print(expression)
         if expression > 0:
             self.expression = "-" + str(expression)
         else:
