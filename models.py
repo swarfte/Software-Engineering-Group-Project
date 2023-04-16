@@ -284,27 +284,27 @@ class AdvanceModel(AbstractModel):
         """
         this method is used to get the pi
         """
-        self.answer = math.pi
+        self.answer = str(math.pi)
 
     def get_e(self) -> None:
         """
         this method is used to get the e
         """
-        self.answer = math.e
+        self.answer = str(math.e)
 
     @pre_replace_expression
     def get_log10(self) -> None:
         """
         this method is used to get the log base 10 of the answer
         """
-        self.answer = math.log10(float(eval(str(self.answer))))
+        self.answer = str(math.log10(float(eval(str(self.answer)))))
 
     @pre_replace_expression
     def get_logln(self) -> None:
         """
         this method is used to get the log base e of the answer
         """
-        self.answer = math.log(float(eval(str(self.answer))))
+        self.answer = str(math.log(float(eval(str(self.answer)))))
 
     def set_minus(self) -> None:  # 有更改
         """
