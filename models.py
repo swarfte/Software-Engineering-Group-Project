@@ -76,39 +76,44 @@ class AdvanceModel(AbstractModel):
         if value == ".e+":
             self.answer = str(self.answer) + value + "0"
             self.isreplace = True
+        elif value == "(":
+            if self.answer != "0" or self.expression and self.expression[-1] in "0123456789":
+                self.expression = str(self.answer) + "x("
+            else:
+                self.expression += value
+            self.bracket_count += 1
+            self.isreplace = False
         elif str(self.expression) == "0" or self.isreplace:
             self.expression = str(self.answer) + value
             self.isreplace = False
-        elif self.symbolholder !=  value == "(":
-            self.expression = str(self.answer) + "x("
-            self.bracket_count += 1
-            self.isreplace = False
-        elif self.symbolholder == "(":
-            self.expression += value
-            self.bracket_count += 1
         else:
             self.expression = self.expression + str(self.answer) + value
 
-        if value == "(":
+        if value == ")":
             self.bracket_count -= 1
 
         def calculate_expression(self) -> None:
             try:
-                if self.symbolholder in {".e+", "(", ")"}:
+                if value in {".e+", "(", ")"}:
                     result = self.answer
                 else:
-                    if self.symbolholder == "^":
-                        result = str(eval(str(self.expression[:-2])))
+                    if value == "^":
+                        self.expression = str(self.expression[:-2])
+                        self.addbracket()
+                        result = str(eval(str(self.expression)))
                     else :
-                        result = str(eval(str(self.expression[:-1])))        
+                        self.expression = str(self.expression[:-1])
+                        self.addbracket()
+                        result = str(eval(str(self.expression)))        
                 return result
             except Exception:
+                self.clear_mode = True
                 return "Error"
         
-        self.symbolholder = value
         self.replaceSymbol(True)
         self.answer = calculate_expression(self)
         self.replaceSymbol(False)
+        self.symbolholder = value
         if not self.symbolholder in {"(", ")"}:
             self.isreplace = True
 
@@ -181,11 +186,6 @@ class AdvanceModel(AbstractModel):
         """
         self.replaceSymbol(True)
         try:
-            if self.bracket_count != 0:
-                self.expression += self.answer
-            for count in range(self.bracket_count):
-                self.expression += ")"
-
             if self.expression and str(self.expression[-1]) in {"+", "-", "*", "/", "%"}:
                 self.expression = str(self.expression) + str(self.answer)
             elif not self.expression and self.symbolholder == "=":
@@ -193,6 +193,9 @@ class AdvanceModel(AbstractModel):
             elif self.isreplace :
                 self.expression = self.answer
                 self.isreplace = True
+            elif self.symbolholder == "(":
+                self.expression += self.answer
+                self.addbracket()
             elif self.symbolholder == ")":
                 pass
             else:
@@ -207,7 +210,9 @@ class AdvanceModel(AbstractModel):
                     result = str(eval(str(self.expression)))
                     return result
                 except Exception:
+                    self.clear_mode = True
                     return "Error"
+                    
             
             self.answer = calculate_expression(self)
             self.replaceSymbol(False)
@@ -221,6 +226,7 @@ class AdvanceModel(AbstractModel):
 
         except Exception as e:
             self.answer = "Error"
+            self.clear_mode = True
 
     def clear_output(self) -> None:
         """
@@ -346,4 +352,6 @@ class AdvanceModel(AbstractModel):
                 else:
                     self.expression = self.expression.replace(value, key)
     
-        
+    def addbracket(self) -> None:
+        for count in range(self.bracket_count):
+            self.expression += ")"
