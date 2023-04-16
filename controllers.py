@@ -83,7 +83,7 @@ class AdvanceController(AbstractController):
             self.generic_refresh_output("clear_output"),  # C => 清除輸入
             self.generic_answer_output("delete_answer"),  # 改成刪減答案     #有更改
             self.generic_answer_output("get_sqrea"),
-            self.generic_refresh_output("get_reciprocal"),  # 1/x  => 倒數   #有更改
+            self.generic_expression_output("get_reciprocal"),  # 1/x  => 倒數   #有更改
             self.generic_answer_output("get_abs"),
             self.generic_symbol(".e+"),  # exp => 科學計數法
             self.generic_symbol("%"),
@@ -211,11 +211,8 @@ class AdvanceController(AbstractController):
         """
         def symbol_action():
             if self.model.symbolholder == "=":
-                self.model.answer = symbol
-                self.model.expression = ""
-                self.refresh()
-            else:
-                self.update_answer(symbol)
+                self.view.set_expression_output("")
+            self.update_answer(symbol)
 
         return symbol_action
 

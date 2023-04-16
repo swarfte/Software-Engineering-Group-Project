@@ -47,6 +47,7 @@ class AdvanceModel(AbstractModel):
         self.isreplace = False  # 可替身狀態 new
         self.symbolholder = ""  # 儲存上一個輸入的symbol
         self.clear_mode= True
+        self.left_bracket_count = 0
 
         # the trigonometric function that will dynamically generate by the trigonometric_function_setup() method
         self.trigonometric_function = [
@@ -70,34 +71,36 @@ class AdvanceModel(AbstractModel):
         """
         the method is used to update the expression
         """
+        self.clear_mode = False
         self.symbolholder = value
-        #if str(self.expression) and str(self.expression)[-1] in {"+", "-", "*", "/"}:
-            #pass
+        self.replaceSymbol(True)
         if value == ".e+":
             self.answer = str(self.answer) + value + "0"
             self.isreplace = True
-        elif str(self.expression) == "0":
+        elif str(self.expression) == "0" or self.isreplace:
             self.expression = str(self.answer) + value
             self.isreplace = False
-        elif self.isreplace:
-            self.expression = str(self.answer) + value
+        elif value == "(":
+            self.expression = str(self.answer) + "x("
+            self.left_bracket_count += 1
             self.isreplace = False
         else:
             self.expression = self.expression + str(self.answer) + value
 
         def calculate_expression(self) -> None:
             try:
-                result = str(eval(str(self.expression[:-1])))
+                if self.symbolholder in {".e+", "("}:
+                    result = self.answer
+                else:
+                    result = str(eval(str(self.expression[:-1])))
                 return result
             except Exception:
                 return "Error"
-
-        for key, value in self.replace_map.items():
-            if key in self.expression:
-                self.expression = self.expression.replace(key, value)
-
+        
+        self.replaceSymbol(True)
         self.answer = calculate_expression(self)
-        self.isreplace = True    
+        self.replaceSymbol(False)
+        self.isreplace = True
 
     def update_answer(self, value: str) -> None:
         """
@@ -120,9 +123,7 @@ class AdvanceModel(AbstractModel):
         def wrapper(self):
             # replace the symbol so that python eval() can process
             temp_expression = self.expression[:]
-            for key, value in self.replace_map.items():
-                if key in self.expression:
-                    self.expression = self.expression.replace(key, value)
+            self.replaceSymbol(True)
 
             # execute the method
             func(self)
@@ -168,17 +169,15 @@ class AdvanceModel(AbstractModel):
         """
         this method is used to calculate the expression from the view
         """
-        for key, value in self.replace_map.items():
-            if key in self.expression:
-                self.expression = self.expression.replace(key, value)
+        self.replaceSymbol(True)
         try:
-            if self.expression and str(self.expression[-1]) in {"+", "-", "*", "/"}:
+            if self.expression and str(self.expression[-1]) in {"+", "-", "*", "/", "%"}:
                 self.expression = str(self.expression) + str(self.answer)
             elif not self.expression and self.symbolholder == "=":
                 self.expression = self.answer
             else:
                 last = 0
-                for symbol in {"+", "-", "*", "/"}:
+                for symbol in {"+", "-", "*", "/", "%"}:
                     if str(self.expression).rfind(symbol) > last:
                         last = str(self.expression).rfind(symbol)
                 self.expression = str(self.answer) + str(self.expression[last:])
@@ -189,11 +188,9 @@ class AdvanceModel(AbstractModel):
                     return result
                 except Exception:
                     return "Error"
-
+            
             self.answer = calculate_expression(self)
-            for key, value in self.replace_map.items():
-                if key in self.expression:
-                    self.expression = self.expression.replace(value, key)
+            self.replaceSymbol(False)
             if self.symbolholder == ".e+":
                 self.expression = self.answer
             
@@ -306,7 +303,24 @@ class AdvanceModel(AbstractModel):
     @pre_replace_expression
     def get_sqrea(self) -> None:
         self.answer = str(math.pow(float(eval(self.answer)), 2))
+        self.isreplace = True
 
     @pre_replace_expression
     def get_root(self) -> None:
         self.answer = str(math.sqrt(float(eval(self.answer))))
+        self.isreplace = False
+
+    def replaceSymbol(self, state:bool) -> None:
+        """
+        this method is used to replace the Symbols
+        True is for ccalculate
+        False is for human readable
+        """
+        for key, value in self.replace_map.items():
+            #if key in self.expression:
+                if state:
+                    self.expression = self.expression.replace(key, value)
+                else:
+                    self.expression = self.expression.replace(value, key)
+    
+        
