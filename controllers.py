@@ -211,7 +211,8 @@ class AdvanceController(AbstractController):
         """
         def symbol_action():
             if self.model.symbolholder == "=":
-                self.view.set_expression_output("")
+                self.model.expression = ""
+                self.view.set_expression_output(self.model.expression)
             self.update_answer(symbol)
 
         return symbol_action

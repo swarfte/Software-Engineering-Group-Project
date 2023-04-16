@@ -47,7 +47,7 @@ class AdvanceModel(AbstractModel):
         self.isreplace = False  # 可替身狀態 new
         self.symbolholder = ""  # 儲存上一個輸入的symbol
         self.clear_mode= True
-        self.left_bracket_count = 0
+        self.bracket_count = 0
 
         # the trigonometric function that will dynamically generate by the trigonometric_function_setup() method
         self.trigonometric_function = [
@@ -72,7 +72,6 @@ class AdvanceModel(AbstractModel):
         the method is used to update the expression
         """
         self.clear_mode = False
-        self.symbolholder = value
         self.replaceSymbol(True)
         if value == ".e+":
             self.answer = str(self.answer) + value + "0"
@@ -80,27 +79,38 @@ class AdvanceModel(AbstractModel):
         elif str(self.expression) == "0" or self.isreplace:
             self.expression = str(self.answer) + value
             self.isreplace = False
-        elif value == "(":
+        elif self.symbolholder !=  value == "(":
             self.expression = str(self.answer) + "x("
-            self.left_bracket_count += 1
+            self.bracket_count += 1
             self.isreplace = False
+        elif self.symbolholder == "(":
+            self.expression += value
+            self.bracket_count += 1
         else:
             self.expression = self.expression + str(self.answer) + value
 
+        if value == "(":
+            self.bracket_count -= 1
+
         def calculate_expression(self) -> None:
             try:
-                if self.symbolholder in {".e+", "("}:
+                if self.symbolholder in {".e+", "(", ")"}:
                     result = self.answer
                 else:
-                    result = str(eval(str(self.expression[:-1])))
+                    if self.symbolholder == "^":
+                        result = str(eval(str(self.expression[:-2])))
+                    else :
+                        result = str(eval(str(self.expression[:-1])))        
                 return result
             except Exception:
                 return "Error"
         
+        self.symbolholder = value
         self.replaceSymbol(True)
         self.answer = calculate_expression(self)
         self.replaceSymbol(False)
-        self.isreplace = True
+        if not self.symbolholder in {"(", ")"}:
+            self.isreplace = True
 
     def update_answer(self, value: str) -> None:
         """
@@ -171,10 +181,20 @@ class AdvanceModel(AbstractModel):
         """
         self.replaceSymbol(True)
         try:
+            if self.bracket_count != 0:
+                self.expression += self.answer
+            for count in range(self.bracket_count):
+                self.expression += ")"
+
             if self.expression and str(self.expression[-1]) in {"+", "-", "*", "/", "%"}:
                 self.expression = str(self.expression) + str(self.answer)
             elif not self.expression and self.symbolholder == "=":
                 self.expression = self.answer
+            elif self.isreplace :
+                self.expression = self.answer
+                self.isreplace = True
+            elif self.symbolholder == ")":
+                pass
             else:
                 last = 0
                 for symbol in {"+", "-", "*", "/", "%"}:
@@ -191,11 +211,13 @@ class AdvanceModel(AbstractModel):
             
             self.answer = calculate_expression(self)
             self.replaceSymbol(False)
-            if self.symbolholder == ".e+":
+            if self.symbolholder ==".e+":
                 self.expression = self.answer
             
             self.symbolholder = "="
             self.isreplace = True
+            self.clear_mode = True
+            self.bracket_count = 0
 
         except Exception as e:
             self.answer = "Error"
@@ -204,10 +226,11 @@ class AdvanceModel(AbstractModel):
         """
         this method is used to clear the output
         """
-        if not self.clear_mode:
+        if self.clear_mode:
             self.expression = ""
         self.answer = "0"
         self.clear_mode = True
+        self.bracket_count = 0
 
     def get_reciprocal(self) -> None:
         """
@@ -308,7 +331,7 @@ class AdvanceModel(AbstractModel):
     @pre_replace_expression
     def get_root(self) -> None:
         self.answer = str(math.sqrt(float(eval(self.answer))))
-        self.isreplace = False
+        self.isreplace = True
 
     def replaceSymbol(self, state:bool) -> None:
         """
