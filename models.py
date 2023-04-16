@@ -77,7 +77,7 @@ class AdvanceModel(AbstractModel):
             self.answer = str(self.answer) + value + "0"
             self.isreplace = True
         elif value == "(":
-            if self.answer != "0" or self.expression and self.expression[-1] in "0123456789":
+            if (not self.expression and self.answer) or (self.expression and self.expression[-1] in "0123456789"):
                 self.expression = str(self.answer) + "x("
             else:
                 self.expression += value
