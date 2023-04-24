@@ -35,4 +35,4 @@
 
 ## demo
 
-> the following link is the demo video of the project: {{ https://youtu.be/E4v4kf-UrqY }}
+> the following link is the demo video of the project: https://youtu.be/E4v4kf-UrqY 
