@@ -46,7 +46,7 @@ class AdvanceModel(AbstractModel):
         self.answer = ""
         self.isreplace = False  # 可替身狀態 new
         self.symbolholder = ""  # 儲存上一個輸入的symbol
-        self.clear_mode= True
+        self.clear_mode = True
         self.bracket_count = 0
 
         # the trigonometric function that will dynamically generate by the trigonometric_function_setup() method
@@ -67,7 +67,7 @@ class AdvanceModel(AbstractModel):
 
         self.trigonometric_function_setup()
 
-    def update_expression(self, value: str) -> None:
+    def update_expression(self,value: str) -> None:
         """
         the method is used to update the expression
         """
@@ -77,13 +77,13 @@ class AdvanceModel(AbstractModel):
             self.answer = str(self.answer) + value + "0"
             self.isreplace = True
         elif value == "(":
-            if (not self.expression and self.answer) or (self.expression and self.expression[-1] in "0123456789"):
-                self.expression = str(self.answer) + "x("
+            if not self.expression:
+                self.expression += str(self.answer) + "x("
             else:
                 self.expression += value
             self.bracket_count += 1
             self.isreplace = False
-        elif str(self.expression) == "0" or self.isreplace:
+        elif str(self.expression) == "0" and self.isreplace:
             self.expression = str(self.answer) + value
             self.isreplace = False
         else:
@@ -97,25 +97,23 @@ class AdvanceModel(AbstractModel):
                 if value in {".e+", "(", ")"}:
                     result = self.answer
                 else:
-                    if value == "^":
-                        self.expression = str(self.expression[:-2])
+                    temp = self.expression
+                    if "(" in str(self.expression):
+                        self.expression = str(self.expression[str(self.expression).rfind("(") + 1:])
+                    else:
                         self.addbracket()
-                        result = str(eval(str(self.expression)))
-                    else :
-                        self.expression = str(self.expression[:-1])
-                        self.addbracket()
-                        result = str(eval(str(self.expression)))        
+                    result = str(eval(str(self.expression[:-1])))
+                    self.expression = temp
                 return result
             except Exception:
                 self.clear_mode = True
                 return "Error"
-        
+            
         self.replaceSymbol(True)
         self.answer = calculate_expression(self)
         self.replaceSymbol(False)
         self.symbolholder = value
-        if not self.symbolholder in {"(", ")"}:
-            self.isreplace = True
+        self.isreplace = True
 
     def update_answer(self, value: str) -> None:
         """
@@ -190,12 +188,8 @@ class AdvanceModel(AbstractModel):
                 self.expression = str(self.expression) + str(self.answer)
             elif not self.expression and self.symbolholder == "=":
                 self.expression = self.answer
-            elif self.isreplace :
-                self.expression = self.answer
-                self.isreplace = True
             elif self.symbolholder == "(":
                 self.expression += self.answer
-                self.addbracket()
             elif self.symbolholder == ")":
                 pass
             else:
@@ -207,6 +201,7 @@ class AdvanceModel(AbstractModel):
 
             def calculate_expression(self) -> None:
                 try:
+                    self.addbracket()
                     result = str(eval(str(self.expression)))
                     return result
                 except Exception:
@@ -268,7 +263,9 @@ class AdvanceModel(AbstractModel):
         """
         this method is used to delete the last digit of the answer
         """
-        self.answer = self.answer[0:len(str(self.expression)) - 1]
+        self.answer = self.answer[0:len(str(self.answer)) - 1]
+        if not self.answer:
+            self.answer = "0"
 
     @pre_replace_expression
     def get_factorial(self) -> None:  # 階乘
