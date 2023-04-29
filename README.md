@@ -15,7 +15,7 @@
 > - Bosco(P2104174) focus testing and management of the software
 > - Tim(P2104193) focus the model and controller of the software
 > - Jacky(P2104352) focus readme and testing of the software
-> - Benjamin(P2104459) focus the user interface and controller of the software
+> - Benjamin(P2104459) focus the user interface and readme of the software
 
 ## algorithm
 
@@ -31,7 +31,7 @@
 
 ## additional coponent
 
-> we use python to build the project. Our IDE is vscode, base on the tkinter and ttkbootstrap library , the project implement the cross-platform running. So most mainstream operating systems can run the project smoothly , such as windows, linux, macos and so on. the following operating system has been tested and can run the project : Windows 11 , Windows 10 , Windows 7 , Ubuntu 22.04 , Ubuntu 20.04, Linux Mint 21 , Linux Mint 20.
+> we use python to build the project. The python version used for development is 3.10.6 , the software needs to run in a python 3 environment. Our IDE is vscode, base on the tkinter and ttkbootstrap library , the project implement the cross-platform running, so most mainstream operating systems can run the project smoothly , such as windows, linux, macos and so on. the following operating system has been tested and can run the project : Windows 11 , Windows 10 , Windows 7 , Ubuntu 22.04 , Ubuntu 20.04, Linux Mint 21 , Linux Mint 20.
 
 ## demo
 
