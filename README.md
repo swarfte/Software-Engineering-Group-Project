@@ -12,7 +12,7 @@
 
 ## Member (Roles & Responsibilities & Portion)
 
-> - Bosco(P2104174) focus testing and management of the software
+> - Bosco(P2104174) focus testing and controller of the software
 > - Tim(P2104193) focus the model and controller of the software
 > - Jacky(P2104352) focus readme and testing of the software
 > - Benjamin(P2104459) focus the user interface and readme of the software
@@ -29,7 +29,7 @@
 
 > At this stage, we have finished the basic function of the calculator,such as arithmetic, log, trigonometric function and so on. We will add more function in the future, such as matrix , calculus and so on. in addition, we also intend to add some auxiliary tools , for example, the record function for user to record the calculation process, the help function for user to get the help information and so on. In future , we consider to develop a function that let user write a script by themselves and then the calculator can run it step by step to get the result, which is similar to the function of the matlab.
 
-## additional coponent
+## additional component
 
 > we use python to build the project. The python version used for development is 3.10.6 , the software needs to run in a python 3 environment. Our IDE is vscode, base on the tkinter and ttkbootstrap library , the project implement the cross-platform running, so most mainstream operating systems can run the project smoothly , such as windows, linux, macos and so on. the following operating system has been tested and can run the project : Windows 11 , Windows 10 , Windows 7 , Ubuntu 22.04 , Ubuntu 20.04, Linux Mint 21 , Linux Mint 20.
 
